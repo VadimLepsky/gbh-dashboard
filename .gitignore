@@ -9,3 +9,5 @@ next-env.d.ts
 coverage/
 .claude/settings.local.json
 .claude/launch.json
+.vercel
+.env*
