@@ -16,15 +16,23 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-chart-7: var(--chart-7);
+  --color-chart-6: var(--chart-6);
   --color-chart-5: var(--chart-5);
-  --color-positive: var(--positive);
-  --color-negative: var(--negative);
-  --color-warning: var(--warning);
-  --color-surface: var(--surface);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  --color-chart-compare: var(--chart-compare);
+  --color-chart-grid: var(--chart-grid);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-negative: var(--negative);
+  --color-negative-soft: var(--negative-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-primary-soft: var(--primary-soft);
+  --color-surface: var(--surface);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -77,10 +85,6 @@
   --chart-3: #136f63;
   --chart-4: #6b6b6b;
   --chart-5: #c97b95;
-  --positive: #136f63;
-  --negative: #b91c1c;
-  --warning: #c2410c;
-  --surface: #fafafa;
   --radius: 0.75rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #0a0a0a;
@@ -90,6 +94,20 @@
   --sidebar-accent-foreground: #0a0a0a;
   --sidebar-border: #e2e2e2;
   --sidebar-ring: #991e43;
+
+  /* Additions: calm extensions of the palette above */
+  --chart-6: #5b6f8c; /* muted slate, for a 6th series */
+  --chart-7: #b89a5e; /* muted sand */
+  --chart-compare: #b9b4b6; /* pale comparison line (prior period / last year) */
+  --chart-grid: #ededed;
+  --primary-soft: #f6e8ed;
+  --positive: #136f63;
+  --positive-soft: #e5f1ee;
+  --negative: #b4232c;
+  --negative-soft: #fbecec;
+  --warning: #b45a1e;
+  --warning-soft: #fdf1e8;
+  --surface: #fafafa;
 }
 
 .dark {
@@ -117,10 +135,6 @@
   --chart-3: #2bb3a3;
   --chart-4: #a99ca3;
   --chart-5: #c97b95;
-  --positive: #2bb3a3;
-  --negative: #f87171;
-  --warning: #fb923c;
-  --surface: #1b1519;
   --sidebar: #211a1e;
   --sidebar-foreground: #f2eef0;
   --sidebar-primary: #d6446e;
@@ -129,6 +143,19 @@
   --sidebar-accent-foreground: #f2eef0;
   --sidebar-border: #382d33;
   --sidebar-ring: #d6446e;
+
+  --chart-6: #8ea2c0;
+  --chart-7: #d2b57a;
+  --chart-compare: #5e5258;
+  --chart-grid: #2c2429;
+  --primary-soft: #3a1f2a;
+  --positive: #2bb3a3;
+  --positive-soft: #18302c;
+  --negative: #f07178;
+  --negative-soft: #3a1e22;
+  --warning: #f0a060;
+  --warning-soft: #36261b;
+  --surface: #1b1519;
 }
 
 @layer base {
@@ -146,8 +173,5 @@
 @layer utilities {
   .tabular {
     font-variant-numeric: tabular-nums;
-  }
-  .scrollbar-thin {
-    scrollbar-width: thin;
   }
 }
