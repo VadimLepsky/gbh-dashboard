@@ -96,8 +96,8 @@
   --sidebar-ring: #991e43;
 
   /* Additions: calm extensions of the palette above */
-  --chart-6: #5b6f8c; /* muted slate, for a 6th series */
-  --chart-7: #b89a5e; /* muted sand */
+  --chart-6: #c18f2e; /* muted ochre */
+  --chart-7: #4a6fa5; /* muted slate blue */
   --chart-compare: #b9b4b6; /* pale comparison line (prior period / last year) */
   --chart-grid: #ededed;
   --primary-soft: #f6e8ed;
@@ -144,8 +144,8 @@
   --sidebar-border: #382d33;
   --sidebar-ring: #d6446e;
 
-  --chart-6: #8ea2c0;
-  --chart-7: #d2b57a;
+  --chart-6: #c99a3c;
+  --chart-7: #7f9fd6;
   --chart-compare: #5e5258;
   --chart-grid: #2c2429;
   --primary-soft: #3a1f2a;

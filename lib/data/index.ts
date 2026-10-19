@@ -2,18 +2,9 @@ import { generateDataset } from './generate'
 import { paymentCandidates } from './match'
 import { pragueToday } from './dates'
 import type { Dataset } from './types'
+import type { ViewAs } from './view-as'
 
-export type ViewAs = 'reditel' | 'morava' | 'novak'
-
-export const VIEW_AS_OPTIONS: { id: ViewAs; label: string; short: string }[] = [
-  { id: 'reditel', label: 'Ředitel obchodu', short: 'Celá firma' },
-  { id: 'morava', label: 'Vedoucí týmu Morava', short: 'Tým Morava' },
-  { id: 'novak', label: 'Jakub Novák (obchodník)', short: 'Jen moje data' },
-]
-
-export function parseViewAs(value: string | undefined | null): ViewAs {
-  return value === 'morava' || value === 'novak' ? value : 'reditel'
-}
+export { VIEW_AS_OPTIONS, parseViewAs, type ViewAs } from './view-as'
 
 let cache: { day: string; full: Dataset; scoped: Map<ViewAs, Dataset> } | null = null
 

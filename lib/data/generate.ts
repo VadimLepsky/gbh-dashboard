@@ -471,7 +471,7 @@ export function generateDataset(todayIso: string): Dataset {
     const stageIdx = OPEN_STAGES.indexOf(current.stage as OpenStage)
     const inStage = today - current.day
     if (s.hook === 'stuck_big') {
-      s.expectedClose = today - rng.int(4, 9)
+      s.expectedClose = today - rng.int(28, 36)
       s.nextStep = null
       continue
     }
@@ -652,6 +652,8 @@ export function generateDataset(todayIso: string): Dataset {
   }
   for (const list of lostByKey.values())
     list.sort((a, b) => OPEN_STAGES.indexOf(b.lostAtStage!) - OPEN_STAGES.indexOf(a.lostAtStage!))
+  const rawByRep = new Array(REPS.length).fill(0)
+  const calByRep = new Array(REPS.length).fill(0)
   const dayOfMonth = Number(todayIso.slice(8, 10))
   for (let m = ymIndex(simStartIso.slice(0, 7)); m <= todayYmIdx; m++) {
     const ym = `${Math.floor(m / 12)}-${String((m % 12) + 1).padStart(2, '0')}`
@@ -690,9 +692,25 @@ export function generateDataset(todayIso: string): Dataset {
         flexible.push(extra)
         original.set(extra, extra.value)
       }
+      if (ago <= 9) {
+        for (const d of flexible) {
+          rawByRep[r] += original.get(d)!
+          calByRep[r] += d.value
+        }
+      }
     }
   }
   for (const s of renewalSims) if (s.closed === null) assignRenewalValue(s)
+
+  // Open and lost deals get the same value level as each rep's (calibrated) wins,
+  // so pipeline, forecast and lost value are comparable with revenue.
+  for (const s of sims) {
+    if (s.outcome === 'won' || s.fixedValue) continue
+    const scale = rawByRep[s.rep] ? Math.min(1.6, Math.max(0.5, calByRep[s.rep] / rawByRep[s.rep])) : 1
+    const [min, max] = VALUE_RANGE[institutions[s.inst].type]
+    const cap = max * (PRODUCTS[s.product].recurring ? 1.8 : 1.5)
+    s.value = roundValue(Math.min(cap, Math.max(min * 0.7, s.value * scale)))
+  }
 
   // ── Contracts and invoices ──────────────────────────────────────────────
   const contracts: Contract[] = []
@@ -894,7 +912,7 @@ export function generateDataset(todayIso: string): Dataset {
   // money is in the bank, but the invoice still looks unpaid.
   const recentPaid = invoices
     .filter((inv) => inv.paidAt && toDay(inv.paidAt) >= today - 21 && toDay(inv.paidAt) <= today - 2)
-    .sort((a, b) => b.amount - a.amount)
+    .sort((a, b) => Math.abs(a.amount - 95_000) - Math.abs(b.amount - 95_000))
   const unmatchedCount = rng.chance(0.4) ? 3 : 2
   const unmatchedIds = new Set<string>()
   for (const inv of recentPaid) {
