@@ -10,6 +10,9 @@ import {
 import type { ISODate } from '../data/types'
 import { formatDate, formatDateShort, formatMonth, formatMonthName } from '../format'
 
+/** Look-back for rates that need a full year of history (renewals, tenders, manual matches). */
+export const TRAILING_MONTHS = 12
+
 export interface DateRange {
   start: ISODate
   /** Inclusive. */

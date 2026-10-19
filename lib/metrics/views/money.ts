@@ -1,4 +1,4 @@
-import { addDays } from '../../data/dates'
+import { addMonths } from '../../data/dates'
 import { PAYMENT_TERM_DAYS } from '../../data/reference'
 import { formatMonthShort } from '../../format'
 import type { MetricContext } from '../context'
@@ -17,7 +17,7 @@ import {
   receivables,
   unmatchedWithCandidates,
 } from '../money'
-import { compareLabel } from '../period'
+import { compareLabel, TRAILING_MONTHS } from '../period'
 import { chartEndMonth, collectedSeries, dsoTrend, overdueSeries } from '../series'
 
 export { PAYMENT_TERM_DAYS }
@@ -69,7 +69,8 @@ export function moneyView(ctx: MetricContext) {
         : null,
       alternatives: u.alternatives,
     })),
-    manualLastYear: manualMatches(ds, { start: addDays(ds.today, -365), end: ds.today }).length,
+    manualLastYear: manualMatches(ds, { start: addMonths(ds.today, -TRAILING_MONTHS), end: ds.today }).length,
     dso: dsoTrend(ds, endYm, 12),
+    trailingMonths: TRAILING_MONTHS,
   }
 }

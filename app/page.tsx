@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, ChevronRight } from 'lucide-react'
 import { buildContext } from '@/lib/metrics/context'
 import { overviewView } from '@/lib/metrics/views/overview'
-import { formatCZK, formatCZKCompact, formatPercent, formatRatio } from '@/lib/format'
+import { formatCZK, formatCZKCompact, formatDays, formatPercent, formatRatio } from '@/lib/format'
 import { periodTitle } from '@/lib/metrics/period'
 import { withState } from '@/lib/query'
 import { PageHeader } from '@/components/shell/page-header'
@@ -30,7 +30,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
         <Section
           className="xl:col-span-2"
           title="Prodáno vs. plán"
-          description="Posledních 12 měsíců. Kliknutím na sloupec zobrazíte dealy daného měsíce."
+          description={`Posledních ${v.sales.length} měsíců. Kliknutím na sloupec zobrazíte dealy daného měsíce.`}
         >
           <SalesPlanChart data={v.sales} />
         </Section>
@@ -125,8 +125,8 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
             })}
           </div>
           <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            Fakturace i úhrady se zpožďují za prodejem: školení se fakturuje po podpisu a dodání, státní instituce
-            platí v průměru 1–3 týdny po splatnosti.
+            Fakturace i úhrady se zpožďují za prodejem: školení se fakturuje po podpisu a dodání a státní instituce
+            platí typicky {formatDays(v.lateness)} po splatnosti (medián za rok).
           </p>
         </Section>
       </div>

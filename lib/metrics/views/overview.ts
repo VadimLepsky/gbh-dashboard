@@ -3,8 +3,9 @@ import { commissionSummary } from '../commissions'
 import type { MetricContext } from '../context'
 import { exceptions } from '../exceptions'
 import { makeKpi } from '../kpi'
-import { collected, invoiced, overdue } from '../money'
-import { compareLabel } from '../period'
+import { collected, invoiced, medianLateness, overdue } from '../money'
+import { compareLabel, TRAILING_MONTHS } from '../period'
+import { addMonths } from '../../data/dates'
 import { forecast, planFor, revenueWon } from '../sales'
 import { chartEndMonth, collectedSeries, commissionSeries, overdueSeries, salesVsPlan } from '../series'
 
@@ -63,6 +64,7 @@ export function overviewView(ctx: MetricContext) {
     exceptions: allExceptions.slice(0, 5),
     exceptionCount: allExceptions.length,
     exceptionTotal: allExceptions.reduce((s, e) => s + e.amount, 0),
+    lateness: medianLateness(ds, { start: addMonths(ds.today, -TRAILING_MONTHS), end: ds.today }),
     owners: Object.fromEntries(ds.salespeople.map((s) => [s.id, s.name])),
   }
 }

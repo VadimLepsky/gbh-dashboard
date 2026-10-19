@@ -23,7 +23,7 @@ export function TeamTable({ rows, today, isCurrent }: { rows: Row[]; today: stri
   const router = useRouter()
   const params = useSearchParams()
   return (
-    <DataTable minWidth={1040}>
+    <DataTable minWidth={900}>
       <thead>
         <tr>
           <Th>Obchodník</Th>
@@ -34,16 +34,16 @@ export function TeamTable({ rows, today, isCurrent }: { rows: Row[]; today: stri
             <MetricLabel id="activities_done" label="Aktivity" />
           </Th>
           <Th align="right">
-            <MetricLabel id="overdue_followups" label="Zpožd. follow-upy" />
+            <MetricLabel id="overdue_followups" label="Zpožd. FU" />
           </Th>
           <Th align="right">
-            <MetricLabel id="no_next_step" />
+            <MetricLabel id="no_next_step" label="Bez kroku" />
           </Th>
           <Th align="right">
             <MetricLabel id="stuck_deals" label="Zaseknuté" />
           </Th>
-          <Th align="right">Poslední aktivita</Th>
-          <Th>Trend 3 měs.</Th>
+          <Th align="right">Posl. akt.</Th>
+          <Th>Trend {Math.max(0, (rows[0]?.trend.length ?? 1) - 1)} měs.</Th>
           <Th />
         </tr>
       </thead>
@@ -68,7 +68,7 @@ export function TeamTable({ rows, today, isCurrent }: { rows: Row[]; today: stri
                   </span>
                 </span>
               </Td>
-              <Td heat={r.heat.pace} className="w-52 min-w-44">
+              <Td heat={r.heat.pace} className="w-48 min-w-40">
                 <DrillButton req={{ metric: 'revenue_won', filters: f }} className="flex w-full flex-col gap-1.5">
                   <span className="flex items-baseline justify-between gap-2">
                     <span className="tabular font-medium">{formatPercent(r.attainment ?? 0, 0)}</span>

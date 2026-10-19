@@ -5,6 +5,7 @@ import { activeTenders, RENEWAL_STATUS_LABEL, renewalRate, tenderWinRate, upcomi
 import { RULES } from '@/lib/metrics/exceptions-shared'
 import { METRICS } from '@/lib/metrics/dictionary'
 import { lookup } from '@/lib/metrics/lookup'
+import { TRAILING_MONTHS } from '@/lib/metrics/period'
 import { formatCZK, formatDate, formatDateShort, formatNumber, formatPercent } from '@/lib/format'
 import { PageHeader } from '@/components/shell/page-header'
 import { EmptyState, Pill, Section, Stat } from '@/components/dashboard/primitives'
@@ -41,7 +42,7 @@ export default async function ContractsPage({ searchParams }: { searchParams: Pr
           <Stat
             label={<MetricLabel id="renewal_rate" />}
             value={rr.rate === null ? '—' : formatPercent(rr.rate, 0)}
-            sub={`${rr.renewed} z ${rr.ended} smluv za 12 měsíců`}
+            sub={`${rr.renewed} z ${rr.ended} smluv za ${TRAILING_MONTHS} měsíců`}
           />
         </DrillButton>
         <DrillButton req={{ metric: 'tenders' }} className="rounded-xl bg-card p-4 ring-1 ring-foreground/[0.07] hover:ring-foreground/15">
@@ -55,14 +56,14 @@ export default async function ContractsPage({ searchParams }: { searchParams: Pr
           <Stat
             label={<MetricLabel id="tender_win_rate" />}
             value={twr.rate === null ? '—' : formatPercent(twr.rate, 0)}
-            sub={`${twr.won} vyhraných, ${twr.lost} prohraných za 12 měsíců`}
+            sub={`${twr.won} vyhraných, ${twr.lost} prohraných za ${TRAILING_MONTHS} měsíců`}
           />
         </DrillButton>
       </div>
 
       <Section
         title={`Obnovy v příštích ${HORIZON_DAYS} dnech`}
-        description={`${METRICS.renewal_rate.label} za 12 měsíců: ${rr.rate === null ? '—' : formatPercent(rr.rate, 0)} · Kč v ohrožení = roční hodnota, kterou zatím nemáme jistou`}
+        description={`${METRICS.renewal_rate.label} za ${TRAILING_MONTHS} měsíců: ${rr.rate === null ? '—' : formatPercent(rr.rate, 0)} · Kč v ohrožení = roční hodnota, kterou zatím nemáme jistou`}
       >
         {renewals.length === 0 ? (
           <EmptyState title="Žádné smlouvy nekončí" />

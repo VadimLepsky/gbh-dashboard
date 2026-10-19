@@ -198,7 +198,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
 
         <Section
           title="Nespárované platby"
-          description={`Platby bez faktury a nejpravděpodobnější kandidát podle částky · ručně spárováno za 12 měsíců: ${v.manualLastYear}`}
+          description={`Platby bez faktury a nejpravděpodobnější kandidát podle částky · ručně spárováno za ${v.trailingMonths} měsíců: ${v.manualLastYear}`}
         >
           {v.unmatched.length === 0 ? (
             <EmptyState title="Všechny platby jsou spárované" />

@@ -1,4 +1,5 @@
-import { addDays, diffDays } from '../data/dates'
+import { addDays, addMonths, diffDays } from '../data/dates'
+import { TRAILING_MONTHS } from './period'
 import type { Contract, Dataset, Deal, Tender } from '../data/types'
 import { lookup } from './lookup'
 import { stageProbability } from './sales'
@@ -46,7 +47,7 @@ export function upcomingRenewals(ds: Dataset, days = 90): RenewalRow[] {
 
 /** Share of recurring contracts that ended in the last 12 months and were renewed. */
 export function renewalRate(ds: Dataset): { rate: number | null; renewed: number; ended: number; contracts: Contract[] } {
-  const from = addDays(ds.today, -365)
+  const from = addMonths(ds.today, -TRAILING_MONTHS)
   const ended = ds.contracts.filter((c) => c.recurring && c.endAt >= from && c.endAt < ds.today)
   const renewed = ended.filter((c) => renewalStatus(ds, c).status === 'obnoveno')
   return { rate: ended.length ? renewed.length / ended.length : null, renewed: renewed.length, ended: ended.length, contracts: ended }
@@ -62,7 +63,7 @@ export function activeTenders(ds: Dataset): Tender[] {
 
 /** Decided tenders (won or lost) whose deal closed in the last 12 months. */
 export function tenderWinRate(ds: Dataset): { rate: number | null; won: number; lost: number } {
-  const from = addDays(ds.today, -365)
+  const from = addMonths(ds.today, -TRAILING_MONTHS)
   const lk = lookup(ds)
   const decided = ds.tenders.filter((t) => {
     if (t.status !== 'vyhráno' && t.status !== 'prohráno') return false

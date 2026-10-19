@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { buildContext } from '@/lib/metrics/context'
-import { teamView } from '@/lib/metrics/views/team'
+import { repView, teamView } from '@/lib/metrics/views/team'
+import { RepDetailBody } from '@/components/dashboard/rep-detail'
 import { STUCK_FACTOR } from '@/lib/metrics/sales'
 import { formatCZK, formatNumber, formatPercent } from '@/lib/format'
 import { PageHeader } from '@/components/shell/page-header'
@@ -15,6 +16,8 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
   const ctx = buildContext(await searchParams)
   const v = teamView(ctx)
   const s = v.summary
+  // A single-rep scope (obchodník) gets their own detail right here instead of an empty page.
+  const single = v.rows.length === 1 ? repView(ctx, v.rows[0].rep.id) : null
 
   return (
     <>
@@ -69,9 +72,11 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
         <TeamTable rows={v.rows} today={ctx.ds.today} isCurrent={ctx.period.isCurrent} />
         <p className="mt-3 text-xs text-muted-foreground">
           Plnění = prodáno / plán za celé období; svislá čárka v pruhu ukazuje, kde by obchodník měl být k dnešku. Trend =
-          plnění za poslední 3 měsíce a průběžně tento měsíc.
+          plnění za poslední {Math.max(0, (v.rows[0]?.trend.length ?? 1) - 1)} měsíce a průběžně tento měsíc.
         </p>
       </Section>
+
+      {single && <RepDetailBody ctx={ctx} v={single} />}
 
       {v.teams.length > 1 && (
         <Section className="mt-3" title="Čechy vs. Morava" description={ctx.period.label}>
