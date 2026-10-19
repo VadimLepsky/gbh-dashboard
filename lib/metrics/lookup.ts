@@ -11,6 +11,7 @@ import type {
   Salesperson,
   Tender,
 } from '../data/types'
+import { getI18n, type I18n } from '../i18n'
 
 export interface Lookup {
   deal: Map<string, Deal>
@@ -64,9 +65,10 @@ export function lookup(ds: Dataset): Lookup {
   return lk
 }
 
-export function dealName(ds: Dataset, deal: Deal): string {
+/** Institution (proper name, kept as is) · product short name in the given language. */
+export function dealName(ds: Dataset, deal: Deal, i18n: I18n = getI18n()): string {
   const lk = lookup(ds)
-  return `${lk.institution.get(deal.institutionId)?.name ?? '?'} · ${lk.product.get(deal.productId)?.shortName ?? ''}`
+  return `${lk.institution.get(deal.institutionId)?.name ?? '?'} · ${i18n.term('productShort', deal.productId)}`
 }
 
 export function repName(ds: Dataset, id: string | null | undefined): string {

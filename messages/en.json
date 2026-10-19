@@ -1,0 +1,640 @@
+{
+  "format": {
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "pointsUnit": "pp"
+  },
+  "units": {
+    "days": {
+      "one": "day",
+      "other": "days"
+    },
+    "deals": {
+      "one": "deal",
+      "other": "deals"
+    },
+    "invoices": {
+      "one": "invoice",
+      "other": "invoices"
+    },
+    "followups": {
+      "one": "follow-up",
+      "other": "follow-ups"
+    },
+    "dealsGen": {
+      "one": "deal",
+      "other": "deals"
+    }
+  },
+  "metrics": {
+    "revenue_won": {
+      "label": "Sold",
+      "definition": "Value of deals closed as won in the period.",
+      "formula": "Σ value of deals in stage Won with close date in the period"
+    },
+    "invoiced": {
+      "label": "Invoiced",
+      "definition": "Total of invoices issued in the period.",
+      "formula": "Σ amount of invoices with issue date in the period"
+    },
+    "collected": {
+      "label": "Collected",
+      "definition": "Money that actually arrived in the bank for invoices in the period.",
+      "formula": "Σ amount of invoices with payment date in the period"
+    },
+    "receivables": {
+      "label": "Receivables",
+      "definition": "Issued invoices that were still unpaid at the end of the period.",
+      "formula": "Σ unpaid invoices at the end of the period"
+    },
+    "overdue": {
+      "label": "Overdue",
+      "definition": "Unpaid invoices that are past their due date.",
+      "formula": "Σ unpaid invoices with due date before the end of the period"
+    },
+    "dso": {
+      "label": "DSO",
+      "definition": "Average number of days from issuing an invoice to its payment.",
+      "formula": "average (payment date − issue date) for invoices paid in the period"
+    },
+    "pipeline": {
+      "label": "Pipeline",
+      "definition": "Total value of all open deals.",
+      "formula": "Σ value of open deals"
+    },
+    "weighted_forecast": {
+      "label": "Weighted forecast",
+      "definition": "Sales estimate for the period: what is already won plus open deals weighted by the probability of their stage.",
+      "formula": "won in the period + Σ value × stage probability of open deals expected to close in the period"
+    },
+    "plan": {
+      "label": "Plan",
+      "definition": "Sales target for the selected team and period.",
+      "formula": "Σ monthly quota of reps × share of each month in the period"
+    },
+    "attainment": {
+      "label": "Plan attainment",
+      "definition": "How much of the plan is already sold.",
+      "formula": "Sold / Plan"
+    },
+    "coverage": {
+      "label": "Pipeline coverage",
+      "definition": "How many times the open pipeline closing in the period covers the part of the plan that is still missing.",
+      "formula": "pipeline expected to close in the period / (Plan − Sold)"
+    },
+    "win_rate": {
+      "label": "Win rate",
+      "definition": "Share of won deals among all deals closed in the period.",
+      "formula": "won / (won + lost), closed in the period"
+    },
+    "cycle_days": {
+      "label": "Sales cycle",
+      "definition": "Typical time from creating a deal to winning it.",
+      "formula": "median days from creation to close for won deals"
+    },
+    "avg_deal": {
+      "label": "Average deal",
+      "definition": "Average value of one won deal.",
+      "formula": "Sold / number of won deals"
+    },
+    "gross_margin": {
+      "label": "Gross margin",
+      "definition": "How much of sales remains after direct costs (trainers, travel, materials).",
+      "formula": "(revenue − costs by product) / revenue"
+    },
+    "activities_done": {
+      "label": "Activities done",
+      "definition": "How many calls, e-mails, meetings and follow-ups reps completed in the period against the target.",
+      "formula": "activities completed in the period / activity target for the period"
+    },
+    "overdue_followups": {
+      "label": "Overdue follow-ups",
+      "definition": "Scheduled activities whose due date has passed and nobody did them.",
+      "formula": "activities due before today with no completion date"
+    },
+    "no_next_step": {
+      "label": "No next step",
+      "definition": "Open deals with no next step scheduled, or with one in the past.",
+      "formula": "open deals with next step = empty or before today"
+    },
+    "stuck_deals": {
+      "label": "Stuck deals",
+      "definition": "Open deals that have been in their current stage much longer than usual.",
+      "formula": "days in current stage > {factor} × median of the stage (public tenders compared separately)"
+    },
+    "commission_payable": {
+      "label": "Commission payable",
+      "definition": "Commission from invoices the client paid in the period. Commission is earned when the invoice is paid.",
+      "formula": "Σ paid revenue × base rate × KPI coefficient of the payment month"
+    },
+    "commission_pending": {
+      "label": "Commission pending",
+      "definition": "Commission from won deals that are not paid yet (not invoiced or unpaid).",
+      "formula": "Σ (not invoiced + unpaid amount) × base rate × current KPI coefficient"
+    },
+    "renewal_rate": {
+      "label": "Renewal rate",
+      "definition": "Share of annual contracts that ended in the last {months} months and were renewed.",
+      "formula": "renewed contracts / contracts ending in the last {months} months"
+    },
+    "tender_win_rate": {
+      "label": "Tender win rate",
+      "definition": "Share of won public tenders among all decided ones.",
+      "formula": "won / (won + lost) tenders"
+    },
+    "unmatched_payments": {
+      "label": "Unmatched payments",
+      "definition": "Bank payments that cannot be matched to an invoice automatically (wrong variable symbol).",
+      "formula": "number of bank payments with no matched invoice"
+    }
+  },
+  "period": {
+    "year": "Year {year}",
+    "yearLower": "{year}",
+    "presets": {
+      "thisMonth": "This month",
+      "lastMonth": "Last month",
+      "quarter": "Quarter",
+      "year": "Year"
+    }
+  },
+  "compare": {
+    "vsPlan": "vs. plan",
+    "vs": "vs. {label}",
+    "options": {
+      "prev": "vs. previous period",
+      "plan": "vs. plan",
+      "yoy": "vs. last year"
+    }
+  },
+  "viewAs": {
+    "reditel": {
+      "label": "Sales director",
+      "short": "Whole company"
+    },
+    "morava": {
+      "label": "Team lead Morava",
+      "short": "Team Morava"
+    },
+    "novak": {
+      "label": "Jakub Novák (sales rep)",
+      "short": "Own data only"
+    }
+  },
+  "terms": {
+    "stage": {
+      "Kontakt": "Contact",
+      "Kvalifikace": "Qualification",
+      "Nabídka": "Proposal",
+      "Vyjednávání": "Negotiation",
+      "Smlouva k podpisu": "Contract for signature",
+      "Vyhráno": "Won",
+      "Prohráno": "Lost"
+    },
+    "lostReason": {
+      "Cena": "Price",
+      "Rozpočet zmrazen": "Budget frozen",
+      "Vybrán konkurent": "Competitor chosen",
+      "Bez odezvy": "No response",
+      "Zrušená zakázka": "Tender cancelled"
+    },
+    "source": {
+      "cold_call": "Cold call",
+      "webinar": "Webinar",
+      "referral": "Referral",
+      "tender": "Public tender",
+      "inbound": "Web / inbound",
+      "fair": "Trade fair"
+    },
+    "product": {
+      "kyber": "Cybersecurity for employees",
+      "krize": "Crisis management and evacuation",
+      "objekty": "Protection of premises and people",
+      "utocnik": "Active shooter response",
+      "management": "Security management for leaders",
+      "ramcova": "Annual framework contract"
+    },
+    "productShort": {
+      "kyber": "Cybersecurity",
+      "krize": "Crisis management",
+      "objekty": "Premises protection",
+      "utocnik": "Active shooter",
+      "management": "Management",
+      "ramcova": "Framework contract"
+    },
+    "tenderTitle": {
+      "Kybernetická bezpečnost pro zaměstnance": "Cybersecurity for employees",
+      "Krizové řízení a evakuace": "Crisis management and evacuation",
+      "Ochrana objektů a osob": "Protection of premises and people",
+      "Útok aktivního útočníka": "Active shooter response",
+      "Bezpečnostní management pro vedoucí": "Security management for leaders",
+      "Roční rámcová smlouva": "Annual framework contract"
+    },
+    "role": {
+      "Senior": "Senior",
+      "Obchodník": "Account executive",
+      "Junior": "Junior"
+    },
+    "institutionType": {
+      "Ministerstvo": "Ministry",
+      "Krajský úřad": "Regional authority",
+      "Městský úřad": "Municipal office",
+      "Nemocnice": "Hospital",
+      "Škola": "School",
+      "Složka IZS": "Emergency service",
+      "Státní podnik": "State enterprise"
+    },
+    "activity": {
+      "hovor": "Call",
+      "e-mail": "E-mail",
+      "schůzka": "Meeting",
+      "follow-up": "Follow-up"
+    },
+    "tenderStatus": {
+      "příprava": "preparation",
+      "podáno": "submitted",
+      "vyhráno": "won",
+      "prohráno": "lost"
+    },
+    "renewalStatus": {
+      "bez-obnovy": "No renewal",
+      "v-jednani": "In negotiation",
+      "obnoveno": "Renewed",
+      "ztraceno": "Lost"
+    },
+    "nextStep": {
+      "Kvalifikační hovor": "Qualification call",
+      "Zjistit odpovědnou osobu": "Find the decision maker",
+      "Úvodní schůzka": "Intro meeting",
+      "Schůzka s vedením": "Meeting with management",
+      "Ověřit rozpočet": "Confirm the budget",
+      "Analýza potřeb": "Needs analysis",
+      "Odeslat nabídku": "Send the proposal",
+      "Prezentace nabídky": "Present the proposal",
+      "Doplnit referenční list": "Add a reference list",
+      "Jednání o ceně": "Price negotiation",
+      "Upravit rozsah školení": "Adjust the training scope",
+      "Schůzka s ekonomem": "Meeting with finance",
+      "Připomínky ke smlouvě": "Contract comments",
+      "Urgovat podpis": "Chase the signature",
+      "Ověřit podpisové právo": "Verify signing authority",
+      "Dokončit nabídku do VZ": "Finish the tender bid"
+    }
+  },
+  "exceptions": {
+    "types": {
+      "overdue_invoice": "Overdue invoice",
+      "stuck_deal": "Stuck deal",
+      "no_next_step": "No next step",
+      "overdue_followups": "Overdue follow-ups",
+      "unsigned_contract": "Unsigned contract",
+      "renewal_risk": "Renewal without a deal",
+      "tender_deadline": "Tender deadline",
+      "low_activity": "Low activity",
+      "unmatched_payment": "Unmatched payment"
+    },
+    "rules": {
+      "overdue_invoice": "Invoice more than {days} days overdue",
+      "stuck_deal": "Stuck deal: in its stage longer than {factor}× the median",
+      "no_next_step": "Open deal with no next step, or with one in the past",
+      "overdue_followups": "Rep with {min} or more overdue follow-ups",
+      "unsigned_contract": "Contract unsigned for more than {days} days",
+      "renewal_risk": "Annual contract ends within {days} days and no renewal deal is open",
+      "tender_deadline": "Public tender due within {days} days, still in preparation",
+      "low_activity": "Rep below {pct} of the activity target over {weeks} weeks",
+      "unmatched_payment": "Bank payment with no matched invoice"
+    },
+    "detail": {
+      "overdueInvoice": "{late} overdue (due {due})",
+      "stuck": "{days} in {stage} (usually {typical})",
+      "nextStepWas": "Next step was due {date} · {stage}",
+      "noStep": "No step scheduled · {stage}",
+      "followups": "Oldest from {date}, covers {deals}",
+      "unsigned": "Sent for signature {date} ({days})",
+      "renewalObject": "{institution} · framework contract",
+      "renewal": "Ends {date} (in {days}), no renewal opened",
+      "tender": "Submission by {date} (in {days}), still in preparation",
+      "lowActivity": "{done} of {target} activities in {weeks} weeks ({pct} of target)",
+      "paymentObject": "Payment {date} · VS {vs}",
+      "paymentCandidate": "Probably {invoice} ({institution}), amount matches",
+      "paymentNoCandidate": "Payer: {payer}, no invoice with the same amount"
+    },
+    "action": {
+      "invoiceCollect": "Hand over to collections, inform the client's management",
+      "invoiceRemind": "Send a reminder and call the client's accounts department",
+      "stuck": {
+        "Kontakt": "Confirm interest or close the deal as lost",
+        "Kvalifikace": "Book a meeting with the decision maker",
+        "Nabídka": "Call about the proposal, find out the objections",
+        "Vyjednávání": "Escalate: team lead meets the client",
+        "Smlouva k podpisu": "Chase the signature with the statutory signatory"
+      },
+      "planStep": "Schedule the next step with the client",
+      "followups": "Finish overdue follow-ups today, reschedule the rest",
+      "unsigned": "Chase the signature, verify signing authority",
+      "renewal": "Open a renewal deal and book a meeting",
+      "tender": "Finish the bid and have it reviewed",
+      "lowActivity": "1:1 with the team lead, weekly activity plan",
+      "paymentMatch": "Match with {invoice} and cancel the reminder",
+      "paymentTrace": "Trace the payer or return the payment"
+    },
+    "tags": {
+      "over30": "30+ days",
+      "stepPast": "step in the past",
+      "noStep": "no next step",
+      "closePassed": "close date passed",
+      "followups6": "6+ overdue",
+      "within30": "within 30 days"
+    }
+  },
+  "conversion": {
+    "window": "last {days} days ({from} – {to})"
+  },
+  "leaks": {
+    "actions": {
+      "Kontakt": {
+        "Bez odezvy": "Tighten lead qualification and use a sequence of 3 touches within 10 days.",
+        "default": "Review the lead source with marketing, adjust targeting and the first-call script."
+      },
+      "Kvalifikace": {
+        "Rozpočet zmrazen": "Confirm budget and spending timeline in the very first call (BANT).",
+        "default": "Add a qualification checklist: decision maker, budget, timeline."
+      },
+      "Nabídka": {
+        "Cena": "Offer two price options and a reference price from a similar office.",
+        "Vybrán konkurent": "Add a competitor comparison and regional references to every proposal.",
+        "default": "Review the proposal template with the team lead; follow up within 3 days of sending."
+      },
+      "Vyjednávání": {
+        "Cena": "Negotiation coaching; discounts approved by the team lead, trade scope rather than price.",
+        "Vybrán konkurent": "Team lead joins 2 meetings; strengthen the pitch with references.",
+        "default": "Weekly pipeline review of deals in negotiation."
+      },
+      "Smlouva k podpisu": {
+        "Rozpočet zmrazen": "Sign before quarter end and watch the client's budget measures.",
+        "default": "Shorten the signing path: e-signature and pre-agreed terms and conditions."
+      }
+    }
+  },
+  "aging": {
+    "current": "Not yet due",
+    "1-30": "1–30 days",
+    "31-60": "31–60 days",
+    "60+": "60+ days"
+  },
+  "chain": {
+    "won": "Won",
+    "signed": "Contract signed",
+    "invoiced": "Invoiced",
+    "paid": "Paid"
+  },
+  "reconcile": {
+    "won": {
+      "source": "Pipedrive",
+      "system": "CRM",
+      "label": "Won deals"
+    },
+    "invoices": {
+      "source": "iDoklad",
+      "system": "Invoicing",
+      "label": "Issued invoices"
+    },
+    "paid": {
+      "source": "iDoklad",
+      "system": "Invoicing",
+      "label": "Paid invoices"
+    },
+    "payments": {
+      "source": "Bank",
+      "system": "Bank API",
+      "label": "Matched payments"
+    }
+  },
+  "drill": {
+    "col": {
+      "deal": "Deal",
+      "owner": "Sales rep",
+      "value": "Value",
+      "closedAt": "Closed",
+      "lostAt": "At stage",
+      "reason": "Reason",
+      "outcome": "Outcome",
+      "stage": "Stage",
+      "expected": "Expected close",
+      "prob": "Prob.",
+      "weighted": "Weighted value",
+      "closeDate": "Close date",
+      "inStage": "Days in stage",
+      "nextStep": "Next step",
+      "invoice": "Invoice",
+      "institution": "Institution",
+      "issuedAt": "Issued",
+      "dueAt": "Due",
+      "paidAt": "Paid",
+      "late": "Delay",
+      "amount": "Amount",
+      "type": "Type",
+      "due": "Due",
+      "done": "Done",
+      "status": "Status",
+      "doc": "Invoice / deal",
+      "date": "Date",
+      "base": "Base",
+      "rateCoef": "Rate × coef.",
+      "commission": "Commission",
+      "daysToPay": "Days to pay",
+      "signed": "Signed",
+      "contract": "Contract",
+      "sent": "Sent",
+      "waiting": "Waiting",
+      "end": "End",
+      "renewal": "Renewal",
+      "annualValue": "Annual value",
+      "atRisk": "At risk",
+      "tender": "Tender",
+      "authority": "Contracting authority",
+      "submission": "Submission",
+      "receivedAt": "Received",
+      "payer": "Payer",
+      "vs": "VS",
+      "candidate": "Candidate",
+      "created": "Created",
+      "cycle": "Cycle"
+    },
+    "count": {
+      "deals": {
+        "one": "{count} deal",
+        "other": "{count} deals"
+      },
+      "openDeals": {
+        "one": "{count} open deal",
+        "other": "{count} open deals"
+      },
+      "closed": {
+        "one": "{count} closed ({won} won)",
+        "other": "{count} closed ({won} won)"
+      },
+      "weighted": {
+        "one": "{count} deal ({won} won, {open} open)",
+        "other": "{count} deals ({won} won, {open} open)"
+      },
+      "dealsWorth": {
+        "one": "{count} deal worth {value}",
+        "other": "{count} deals worth {value}"
+      },
+      "activities": {
+        "one": "{count} activity",
+        "other": "{count} activities"
+      },
+      "invoices": {
+        "one": "{count} invoice",
+        "other": "{count} invoices"
+      },
+      "paidInvoices": {
+        "one": "{count} paid invoice",
+        "other": "{count} paid invoices"
+      },
+      "items": {
+        "one": "{count} item",
+        "other": "{count} items"
+      },
+      "contracts": {
+        "one": "{count} contract",
+        "other": "{count} contracts"
+      },
+      "renewed": {
+        "one": "{count} contract ({renewed} renewed)",
+        "other": "{count} contracts ({renewed} renewed)"
+      },
+      "tenders": {
+        "one": "{count} tender",
+        "other": "{count} tenders"
+      },
+      "payments": {
+        "one": "{count} payment",
+        "other": "{count} payments"
+      },
+      "cohort": {
+        "one": "{count} deal left the stage ({advanced} advanced)",
+        "other": "{count} deals left the stage ({advanced} advanced)"
+      },
+      "wonDeals": {
+        "one": "{count} won deal",
+        "other": "{count} won deals"
+      },
+      "candidates": {
+        "one": "{count} candidate by amount",
+        "other": "{count} candidates by amount"
+      }
+    },
+    "text": {
+      "coldCall": "Cold call (new contact)",
+      "lineKind": {
+        "paid": "Payable",
+        "unpaid": "Awaiting payment",
+        "uninvoiced": "Awaiting invoice"
+      },
+      "amountMatch": "{invoice} (amount match)",
+      "lostTitle": "Lost · {reason}",
+      "lostAll": "Lost deals",
+      "lostTotal": "Lost value",
+      "pipelineStage": "Pipeline · {stage}",
+      "openToday": "open deals as of today",
+      "closingSoon": "Closing in the next {days} days",
+      "asOfToday": "as of today",
+      "count": "Count",
+      "lastWeeks": "last {weeks} weeks",
+      "activitiesNote": "Calls {calls} · e-mails {emails} · meetings {meetings} · follow-ups {followups}",
+      "receivablesOf": "Receivables · {label}",
+      "asOf": "as of {date}",
+      "total": "Total",
+      "commissionRep": "Commission · {name}",
+      "commissionAll": "Total commission (payable + pending)",
+      "commissionNote": "Commission is earned when the invoice is paid. KPI coefficient is based on plan attainment in the month of payment.",
+      "chain": "Chain · {step}",
+      "chainSubtitle": "deals won in {period}",
+      "unsignedTitle": "Contracts awaiting signature",
+      "unsignedSubtitle": "more than {days} days",
+      "renewalsTitle": "Renewals in the next {days} days",
+      "atRisk": "CZK at risk",
+      "renewalRateSubtitle": "contracts ending in the last {months} months",
+      "tendersStatus": "Public tenders · {status}",
+      "tendersActive": "Active public tenders",
+      "cohortTitle": "{stage} → next stage",
+      "conversion": "Conversion",
+      "advanced": "Advanced",
+      "median": "Median",
+      "unknown": "Unknown view"
+    },
+    "record": {
+      "invoiceNotFound": "Invoice not found",
+      "contractNotFound": "Contract not found",
+      "tenderNotFound": "Tender not found",
+      "paymentNotFound": "Payment not found",
+      "notFound": "Record not found",
+      "noAccess": "This record is outside your access",
+      "tender": "Public tender",
+      "submissionDeadline": "Submission deadline",
+      "tenderStatus": "Tender status",
+      "paymentTitle": "Payment {amount}",
+      "received": "received {date}",
+      "payer": "Payer",
+      "vs": "Variable symbol",
+      "status": "Status",
+      "matchedManual": "Matched manually",
+      "matchedAuto": "Matched automatically",
+      "unmatched": "Unmatched",
+      "likelyInvoice": "Most likely invoice",
+      "noCandidate": "none with the same amount",
+      "paymentNote": "The variable symbol differs by swapped digits; the amount matches exactly. Recommendation: match manually and cancel the reminder.",
+      "contractSent": "Contract {id} sent for signature",
+      "contractSigned": "Contract {id} signed",
+      "invoiceIssued": "Invoice {number} issued ({amount})",
+      "invoicePaid": "Invoice {number} paid",
+      "institution": "Institution",
+      "product": "Product",
+      "rep": "Sales rep",
+      "source": "Source",
+      "renewalSuffix": " · contract renewal",
+      "stage": "Stage",
+      "daysInStage": "{days} in stage",
+      "created": "Created",
+      "expectedClose": "Expected close",
+      "nextStep": "Next step",
+      "notScheduled": "not scheduled",
+      "probability": "Probability",
+      "closed": "Closed",
+      "closedValue": "{date} · cycle {cycle}",
+      "tenderValue": "{id} · submission {date} · {status}",
+      "unpaid": "Unpaid",
+      "dealValue": "Deal value",
+      "amount": "Amount"
+    }
+  }
+}

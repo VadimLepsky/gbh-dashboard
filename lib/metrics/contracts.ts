@@ -6,12 +6,7 @@ import { stageProbability } from './sales'
 
 export type RenewalStatus = 'bez-obnovy' | 'v-jednani' | 'obnoveno' | 'ztraceno'
 
-export const RENEWAL_STATUS_LABEL: Record<RenewalStatus, string> = {
-  'bez-obnovy': 'Bez obnovy',
-  'v-jednani': 'V jednání',
-  obnoveno: 'Obnoveno',
-  ztraceno: 'Ztraceno',
-}
+/** Display texts: `terms.renewalStatus.<status>` in the dictionaries. */
 
 export interface RenewalRow {
   contract: Contract

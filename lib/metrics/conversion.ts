@@ -1,7 +1,7 @@
 import { addDays, diffDays } from '../data/dates'
 import { INSTITUTION_TYPES, STAGE_PROBABILITY } from '../data/reference'
 import { LOST_REASONS, OPEN_STAGES, type Dataset, type Deal, type LostReason, type OpenStage } from '../data/types'
-import { formatDate } from '../format'
+import { getI18n, type I18n } from '../i18n'
 import { lookup } from './lookup'
 import { inRange, type DateRange, type Period } from './period'
 import { cycleDays, lostDeals, matchDeal, median, openDeals, stageSpans, sum, wonDeals, type DealFilter, type StageSpan } from './sales'
@@ -10,10 +10,13 @@ import { cycleDays, lostDeals, matchDeal, median, openDeals, stageSpans, sum, wo
  * Conversion needs enough closed stages to be meaningful. Short periods use a trailing
  * 90-day window ending on the period's last day; the UI says so.
  */
-export function conversionWindow(p: Period): DateRange & { label: string; widened: boolean } {
-  if (diffDays(p.start, p.asOf) >= 89) return { start: p.start, end: p.asOf, label: p.label, widened: false }
-  const start = addDays(p.asOf, -89)
-  return { start, end: p.asOf, label: `posledních 90 dní (${formatDate(start)} – ${formatDate(p.asOf)})`, widened: true }
+const WINDOW_DAYS = 90
+
+export function conversionWindow(p: Period, i18n: I18n = getI18n()): DateRange & { label: string; widened: boolean } {
+  if (diffDays(p.start, p.asOf) >= WINDOW_DAYS - 1) return { start: p.start, end: p.asOf, label: p.label, widened: false }
+  const start = addDays(p.asOf, -(WINDOW_DAYS - 1))
+  const label = i18n.t('conversion.window', { days: WINDOW_DAYS, from: i18n.f.formatDate(start), to: i18n.f.formatDate(p.asOf) })
+  return { start, end: p.asOf, label, widened: true }
 }
 
 /** Stage spans that ended (advanced, won or lost) inside the window. */
@@ -59,9 +62,9 @@ export interface FunnelRow extends StageConversion {
   openValue: number
 }
 
-export function funnel(ds: Dataset, p: Period, f?: DealFilter): FunnelRow[] {
+export function funnel(ds: Dataset, p: Period, f?: DealFilter, i18n: I18n = getI18n()): FunnelRow[] {
   const open = openDeals(ds, f)
-  return stageConversions(ds, conversionWindow(p), f).map((c) => {
+  return stageConversions(ds, conversionWindow(p, i18n), f).map((c) => {
     const inStage = open.filter((d) => d.stage === c.stage)
     return { ...c, openCount: inStage.length, openValue: sum(inStage, (d) => d.value) }
   })
@@ -75,14 +78,14 @@ export interface ConversionMatrixRow {
   closed: number
 }
 
-export function conversionBySource(ds: Dataset, r: DateRange): ConversionMatrixRow[] {
+export function conversionBySource(ds: Dataset, r: DateRange, i18n: I18n = getI18n()): ConversionMatrixRow[] {
   return ds.sources.map((s) => {
     const f = { sourceId: s.id }
     const won = wonDeals(ds, r, f).length
     const lost = lostDeals(ds, r, f).length
     return {
       key: s.id,
-      label: s.name,
+      label: i18n.term('source', s.id),
       cells: stageConversions(ds, r, f),
       winRate: won + lost ? won / (won + lost) : null,
       closed: won + lost,
@@ -104,15 +107,15 @@ export function lostByReason(ds: Dataset, r: DateRange): LostReasonRow[] {
   }).sort((a, b) => b.value - a.value)
 }
 
-export function cycleBy(ds: Dataset, r: DateRange, by: 'source' | 'institutionType') {
+export function cycleBy(ds: Dataset, r: DateRange, by: 'source' | 'institutionType', i18n: I18n = getI18n()) {
   const won = wonDeals(ds, r)
   const lk = lookup(ds)
   const groups =
     by === 'source'
-      ? ds.sources.map((s) => ({ key: s.id, label: s.name, deals: won.filter((d) => d.sourceId === s.id) }))
+      ? ds.sources.map((s) => ({ key: s.id, label: i18n.term('source', s.id), deals: won.filter((d) => d.sourceId === s.id) }))
       : INSTITUTION_TYPES.map((t) => ({
           key: t,
-          label: t,
+          label: i18n.term('institutionType', t),
           deals: won.filter((d) => lk.institution.get(d.institutionId)?.type === t),
         }))
   return groups
@@ -138,40 +141,16 @@ export interface Leak {
   action: string
 }
 
-const ACTION: Record<OpenStage, Partial<Record<LostReason | 'default', string>>> = {
-  Kontakt: {
-    'Bez odezvy': 'Zpřísnit kvalifikaci leadů a zavést sekvenci 3 kontaktů do 10 dní.',
-    default: 'Projít zdroj leadů s marketingem, upravit cílení a skript prvního hovoru.',
-  },
-  Kvalifikace: {
-    'Rozpočet zmrazen': 'Ověřovat rozpočet a termín čerpání už při prvním hovoru (BANT).',
-    default: 'Doplnit kvalifikační checklist: rozhodovatel, rozpočet, termín.',
-  },
-  Nabídka: {
-    Cena: 'Nabízet dvě cenové varianty a referenční cenu podobného úřadu.',
-    'Vybrán konkurent': 'Ke každé nabídce přidat srovnání s konkurencí a reference z regionu.',
-    default: 'Revize šablony nabídky s vedoucím týmu, follow-up do 3 dní po odeslání.',
-  },
-  Vyjednávání: {
-    Cena: 'Koučink vyjednávání; slevu schvaluje vedoucí týmu, raději rozsah než cenu.',
-    'Vybrán konkurent': 'Společná účast vedoucího na 2 jednáních, posílit argumentaci referencemi.',
-    default: 'Pravidelný pipeline review dealů ve vyjednávání každý týden.',
-  },
-  'Smlouva k podpisu': {
-    'Rozpočet zmrazen': 'Podepisovat do konce čtvrtletí, hlídat rozpočtová opatření klienta.',
-    default: 'Zkrátit cestu podpisu: elektronický podpis a předem odsouhlasené VOP.',
-  },
+/** Lost reasons with a dedicated recommendation per stage; texts in `leaks.actions.<stage>.<reason|default>`. */
+const ACTION_REASONS: Record<OpenStage, LostReason[]> = {
+  Kontakt: ['Bez odezvy'],
+  Kvalifikace: ['Rozpočet zmrazen'],
+  Nabídka: ['Cena', 'Vybrán konkurent'],
+  Vyjednávání: ['Cena', 'Vybrán konkurent'],
+  'Smlouva k podpisu': ['Rozpočet zmrazen'],
 }
 
-const NEXT_STAGE_PROBABILITY: Record<OpenStage, number> = {
-  Kontakt: STAGE_PROBABILITY.Kvalifikace,
-  Kvalifikace: STAGE_PROBABILITY.Nabídka,
-  Nabídka: STAGE_PROBABILITY.Vyjednávání,
-  Vyjednávání: STAGE_PROBABILITY['Smlouva k podpisu'],
-  'Smlouva k podpisu': STAGE_PROBABILITY.Vyhráno,
-}
-
-export function leaks(ds: Dataset, r: DateRange, limit = 5): Leak[] {
+export function leaks(ds: Dataset, r: DateRange, limit = 5, i18n: I18n = getI18n()): Leak[] {
   const spans = closedSpans(ds, r)
   const lk = lookup(ds)
   const out: Leak[] = []
@@ -180,7 +159,7 @@ export function leaks(ds: Dataset, r: DateRange, limit = 5): Leak[] {
     if (all.length < 8) continue
     const avgRate = all.filter((s) => s.outcome !== 'lost').length / all.length
     const dims: { dimension: Leak['dimension']; key: (s: StageSpan) => string; label: (k: string) => string }[] = [
-      { dimension: 'source', key: (s) => s.deal.sourceId, label: (k) => lk.source.get(k)?.name ?? k },
+      { dimension: 'source', key: (s) => s.deal.sourceId, label: (k) => i18n.term('source', k) },
       { dimension: 'owner', key: (s) => s.deal.ownerId, label: (k) => lk.rep.get(k)?.name ?? k },
     ]
     for (const dim of dims) {
@@ -212,7 +191,7 @@ export function leaks(ds: Dataset, r: DateRange, limit = 5): Leak[] {
           amount,
           ownerId,
           topReason,
-          action: ACTION[stage][topReason ?? 'default'] ?? ACTION[stage].default!,
+          action: i18n.t(`leaks.actions.${stage}.${topReason && ACTION_REASONS[stage].includes(topReason) ? topReason : 'default'}`),
         })
       }
     }
