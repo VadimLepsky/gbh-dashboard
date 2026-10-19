@@ -17,6 +17,7 @@ import {
   MASC_ROOTS,
   MINISTRIES,
   NEXT_STEP_BY_STAGE,
+  PAYMENT_TERM_DAYS,
   PRODUCTS,
   PROFILE_BY_ROLE,
   SINGLE_NAMES,
@@ -129,7 +130,7 @@ interface RepConfig {
 const REPS: RepConfig[] = [
   {
     id: 'jnovak', name: 'Jakub Novák', initials: 'JN', role: 'Senior', teamId: 'cechy',
-    quota: 520_000, activityTarget: 105, callsPerDay: 3, startMonthsAgo: 98,
+    quota: 520_000, activityTarget: 125, callsPerDay: 3, startMonthsAgo: 98,
     perf: () => 1.26, discipline: () => 1.0, hygiene: () => 1.0, noise: 0.05,
   },
   {
@@ -726,7 +727,7 @@ export function generateDataset(todayIso: string): Dataset {
 
   const addInvoice = (contract: Contract, issue: number, amount: number, forcePaid?: number | null) => {
     if (issue > today) return
-    const due = issue + 14
+    const due = issue + PAYMENT_TERM_DAYS
     let paid: number | null = forcePaid !== undefined ? forcePaid : Math.max(issue + 3, due + paymentDelay())
     if (paid !== null && paid > today) paid = null
     rawInvoices.push({

@@ -50,6 +50,9 @@ export const SOURCES: LeadSource[] = [
   { id: 'fair', name: 'Veletrh' },
 ]
 
+/** Standard payment term on invoices, days. */
+export const PAYMENT_TERM_DAYS = 14
+
 export const STAGE_PROBABILITY: Record<Stage, number> = {
   Kontakt: 0.1,
   Kvalifikace: 0.25,

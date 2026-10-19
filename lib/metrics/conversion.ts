@@ -1,5 +1,5 @@
 import { addDays, diffDays } from '../data/dates'
-import { INSTITUTION_TYPES } from '../data/reference'
+import { INSTITUTION_TYPES, STAGE_PROBABILITY } from '../data/reference'
 import { LOST_REASONS, OPEN_STAGES, type Dataset, type Deal, type LostReason, type OpenStage } from '../data/types'
 import { formatDate } from '../format'
 import { lookup } from './lookup'
@@ -131,7 +131,7 @@ export interface Leak {
   left: number
   rate: number
   avgRate: number
-  /** Value we would have kept at the average conversion. */
+  /** Expected revenue lost against the average conversion of the stage. */
   amount: number
   ownerId: string | null
   topReason: LostReason | null
@@ -163,6 +163,14 @@ const ACTION: Record<OpenStage, Partial<Record<LostReason | 'default', string>>>
   },
 }
 
+const NEXT_STAGE_PROBABILITY: Record<OpenStage, number> = {
+  Kontakt: STAGE_PROBABILITY.Kvalifikace,
+  Kvalifikace: STAGE_PROBABILITY.Nabídka,
+  Nabídka: STAGE_PROBABILITY.Vyjednávání,
+  Vyjednávání: STAGE_PROBABILITY['Smlouva k podpisu'],
+  'Smlouva k podpisu': STAGE_PROBABILITY.Vyhráno,
+}
+
 export function leaks(ds: Dataset, r: DateRange, limit = 5): Leak[] {
   const spans = closedSpans(ds, r)
   const lk = lookup(ds)
@@ -187,7 +195,8 @@ export function leaks(ds: Dataset, r: DateRange, limit = 5): Leak[] {
         const rate = advanced / list.length
         if (rate >= avgRate) continue
         const avgValue = sum(list, (s) => s.deal.value) / list.length
-        const amount = (avgRate - rate) * list.length * avgValue
+        // Deals that would have advanced at the average rate, valued at the win probability of the next stage.
+        const amount = (avgRate - rate) * list.length * avgValue * NEXT_STAGE_PROBABILITY[stage]
         const lost = list.filter((s) => s.outcome === 'lost').map((s) => s.deal)
         const topReason = mostCommon(lost.map((d) => d.lostReason).filter(Boolean) as LostReason[])
         const ownerId = dim.dimension === 'owner' ? key : mostValuableOwner(lost)
@@ -208,7 +217,16 @@ export function leaks(ds: Dataset, r: DateRange, limit = 5): Leak[] {
       }
     }
   }
-  return out.sort((a, b) => b.amount - a.amount).slice(0, limit)
+  // Keep the list varied: at most two leaks from the same stage.
+  const perStage = new Map<string, number>()
+  return out
+    .sort((a, b) => b.amount - a.amount)
+    .filter((l) => {
+      const n = perStage.get(l.stage) ?? 0
+      perStage.set(l.stage, n + 1)
+      return n < 2
+    })
+    .slice(0, limit)
 }
 
 function mostCommon<T>(items: T[]): T | null {

@@ -244,8 +244,11 @@ export function daysInStage(d: Deal, today: ISODate): number {
   return toDay(today) - toDay(last.enteredAt)
 }
 
+/** A deal is stuck after this many typical stage durations. */
+export const STUCK_FACTOR = 2
+
 export function isStuck(ds: Dataset, d: Deal): boolean {
-  return isOpen(d) && daysInStage(d, ds.today) > 2 * medianForDeal(ds, d)
+  return isOpen(d) && daysInStage(d, ds.today) > STUCK_FACTOR * medianForDeal(ds, d)
 }
 
 export function stuckDeals(ds: Dataset, f?: DealFilter): Deal[] {

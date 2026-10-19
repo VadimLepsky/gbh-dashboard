@@ -5,7 +5,7 @@ import { formatAxisCZK, formatCZK, formatMonth, formatMonthShort, formatPercent 
 import type { DrillFilterValue } from '@/lib/metrics/drill-types'
 import type { SalesPoint } from '@/lib/metrics/series'
 import { useDrill } from '@/components/drill/drill-provider'
-import { AXIS_TICK, Legend, TooltipCard } from './chart-kit'
+import { AXIS_TICK, Legend, TooltipCard, niceTicks } from './chart-kit'
 
 export function SalesPlanChart({
   data,
@@ -20,6 +20,7 @@ export function SalesPlanChart({
 }) {
   const { openDrill } = useDrill()
   const rows = data.map((d) => ({ ...d, label: formatMonthShort(d.ym, d.ym.endsWith('-01')) }))
+  const ticks = niceTicks(Math.max(...data.map((d) => Math.max(d.won + d.expected, d.plan, showLastYear ? d.lastYear : 0)), 1))
   const open = (ym: string) =>
     openDrill({ metric: 'revenue_won', filters: { ...filters, month: ym }, title: `Prodáno · ${formatMonth(ym)}` })
 
@@ -38,7 +39,7 @@ export function SalesPlanChart({
           <ComposedChart data={rows} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} barCategoryGap="28%">
             <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
             <XAxis dataKey="label" tickLine={false} axisLine={false} tick={AXIS_TICK} interval={0} tickMargin={8} />
-            <YAxis tickLine={false} axisLine={false} tick={AXIS_TICK} tickFormatter={formatAxisCZK} width={58} />
+            <YAxis tickLine={false} axisLine={false} tick={AXIS_TICK} tickFormatter={formatAxisCZK} width={58} ticks={ticks} domain={[0, ticks[ticks.length - 1]]} />
             <Tooltip
               cursor={{ fill: 'var(--muted)', opacity: 0.5 }}
               content={({ active, payload }) => {
@@ -58,7 +59,7 @@ export function SalesPlanChart({
                 )
               }}
             />
-            <Bar
+            <Bar isAnimationActive={false}
               dataKey="won"
               stackId="s"
               fill="var(--chart-1)"
@@ -67,7 +68,7 @@ export function SalesPlanChart({
               cursor="pointer"
               onClick={(d) => open((d as unknown as { payload: SalesPoint }).payload.ym)}
             />
-            <Bar
+            <Bar isAnimationActive={false}
               dataKey="expected"
               stackId="s"
               fill="color-mix(in oklab, var(--chart-1) 28%, transparent)"
@@ -79,9 +80,9 @@ export function SalesPlanChart({
               onClick={(d) => open((d as unknown as { payload: SalesPoint }).payload.ym)}
             />
             {showLastYear && (
-              <Line dataKey="lastYear" type="monotone" stroke="var(--chart-compare)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: 'var(--card)' }} />
+              <Line isAnimationActive={false} dataKey="lastYear" type="monotone" stroke="var(--chart-compare)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: 'var(--card)' }} />
             )}
-            <Line dataKey="plan" type="linear" stroke="var(--foreground)" strokeOpacity={0.55} strokeWidth={1.5} strokeDasharray="4 4" dot={false} activeDot={false} />
+            <Line isAnimationActive={false} dataKey="plan" type="linear" stroke="var(--foreground)" strokeOpacity={0.55} strokeWidth={1.5} strokeDasharray="4 4" dot={false} activeDot={false} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

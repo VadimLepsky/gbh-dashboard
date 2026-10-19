@@ -33,11 +33,17 @@ export function Sparkline({
   }[tone]
   const [lx, ly] = pts[pts.length - 1]
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className={cn('h-8 w-full overflow-visible', className)} aria-hidden>
-      <path d={area} fill={color} opacity={0.07} />
-      <path d={d} fill="none" stroke={color} strokeWidth={1.75} strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-      <circle cx={lx} cy={ly} r={2.6} fill={color} stroke="var(--card)" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
-    </svg>
+    <span className={cn('relative block h-8 w-full', className)} style={{ height: h }} aria-hidden>
+      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
+        <path d={area} fill={color} opacity={0.07} />
+        <path d={d} fill="none" stroke={color} strokeWidth={1.75} strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      </svg>
+      {/* The end point is HTML so it stays round when the SVG stretches. */}
+      <span
+        className="absolute size-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full ring-[1.5px] ring-card"
+        style={{ left: `${(lx / w) * 100}%`, top: `${(ly / h) * 100}%`, background: color }}
+      />
+    </span>
   )
 }
 

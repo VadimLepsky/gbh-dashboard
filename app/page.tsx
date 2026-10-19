@@ -6,7 +6,7 @@ import { formatCZK, formatCZKCompact, formatPercent, formatRatio } from '@/lib/f
 import { periodTitle } from '@/lib/metrics/period'
 import { withState } from '@/lib/query'
 import { PageHeader } from '@/components/shell/page-header'
-import { KpiCard } from '@/components/dashboard/kpi-card'
+import { KpiGrid } from '@/components/dashboard/kpi-grid'
 import { ProgressBar, Section } from '@/components/dashboard/primitives'
 import { MetricLabel } from '@/components/dashboard/info-tip'
 import { ExceptionList } from '@/components/dashboard/exception-list'
@@ -24,16 +24,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
     <>
       <PageHeader ctx={ctx} title="Přehled" />
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6 2xl:grid-cols-5">
-        {v.kpis.map((k, i) => (
-          <KpiCard
-            key={k.id}
-            kpi={k}
-            title={i === 0 ? 'Prodáno vs. plán' : i === 1 ? 'Prognóza na konec období' : undefined}
-            className={i < 2 ? 'lg:col-span-3 2xl:col-span-1' : i === 4 ? 'sm:col-span-2 lg:col-span-2 2xl:col-span-1' : 'lg:col-span-2 2xl:col-span-1'}
-          />
-        ))}
-      </div>
+      <KpiGrid kpis={v.kpis} titles={{ 0: 'Prodáno vs. plán', 1: 'Prognóza na konec období' }} />
 
       <div className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-3">
         <Section

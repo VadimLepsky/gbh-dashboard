@@ -16,7 +16,10 @@ export function DrillButton({
   return (
     <button
       type="button"
-      onClick={() => openDrill(req)}
+      onClick={(e) => {
+        e.stopPropagation()
+        openDrill(req)
+      }}
       className={cn(
         'cursor-pointer rounded-md text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/40',
         className,

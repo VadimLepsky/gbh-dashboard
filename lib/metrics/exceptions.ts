@@ -8,8 +8,8 @@ import { upcomingRenewals } from './contracts'
 import { daysInStage, hasNoNextStep, isStuck, medianForDeal, openDeals, revenueWon, weightedValue } from './sales'
 import { overdueFollowups, rollingActivityRatio } from './team'
 
-export { EXCEPTION_LABEL, type ExceptionItem, type ExceptionType } from './exceptions-shared'
-import { type ExceptionItem } from './exceptions-shared'
+export { EXCEPTION_LABEL, RULES, RULE_TEXT, type ExceptionItem, type ExceptionType } from './exceptions-shared'
+import { RULES, type ExceptionItem } from './exceptions-shared'
 
 const STUCK_ACTION: Record<OpenStage, string> = {
   Kontakt: 'Ověřit zájem, nebo deal uzavřít jako prohraný',
@@ -38,7 +38,7 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
   // Invoices more than 14 days overdue
   for (const inv of overdueInvoices(ds, today)) {
     const late = daysOverdue(inv, today)
-    if (late <= 14) continue
+    if (late <= RULES.overdueInvoiceDays) continue
     push({
       id: `inv-${inv.id}`,
       type: 'overdue_invoice',
@@ -84,7 +84,7 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
   const byOwner = new Map<string, ReturnType<typeof overdueFollowups>>()
   for (const a of overdueFollowups(ds)) byOwner.set(a.ownerId, [...(byOwner.get(a.ownerId) ?? []), a])
   for (const [ownerId, acts] of byOwner) {
-    if (acts.length < 2) continue
+    if (acts.length < RULES.followupsMin) continue
     const deals = new Set(acts.map((a) => a.dealId).filter(Boolean) as string[])
     const amount = [...deals].reduce((s, id) => s + weightedValue(lk.deal.get(id)!), 0)
     const oldest = acts.reduce((m, a) => (a.dueAt < m ? a.dueAt : m), acts[0].dueAt)
@@ -106,7 +106,7 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
   for (const c of ds.contracts) {
     if (c.signedAt) continue
     const waiting = diffDays(c.sentForSignatureAt, today)
-    if (waiting <= 7) continue
+    if (waiting <= RULES.unsignedDays) continue
     push({
       id: `sm-${c.id}`,
       type: 'unsigned_contract',
@@ -122,7 +122,7 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
   }
 
   // Annual contracts ending within 60 days without a renewal deal
-  for (const r of upcomingRenewals(ds, 60)) {
+  for (const r of upcomingRenewals(ds, RULES.renewalDays)) {
     if (r.status !== 'bez-obnovy') continue
     push({
       id: `ren-${r.contract.id}`,
@@ -142,7 +142,7 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
   for (const t of ds.tenders) {
     if (t.status !== 'příprava') continue
     const left = diffDays(today, t.submissionDeadline)
-    if (left < 0 || left >= 7) continue
+    if (left < 0 || left >= RULES.tenderDays) continue
     push({
       id: `vz-${t.id}`,
       type: 'tender_deadline',
@@ -160,7 +160,7 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
   // Reps below 60 % of activity target (rolling 4 weeks)
   for (const rep of ds.salespeople) {
     const { done, target, ratio } = rollingActivityRatio(ds, rep.id)
-    if (ratio >= 0.6) continue
+    if (ratio >= RULES.lowActivityRatio) continue
     const monthStart = startOfMonth(today)
     const gap = Math.max(0, rep.monthlyQuota - revenueWon(ds, { start: monthStart, end: today }, { ownerId: rep.id }))
     push({
@@ -179,7 +179,7 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
 
   // Bank payments without an invoice
   for (const p of unmatchedPayments(ds)) {
-    if (diffDays(p.receivedAt, today) > 45) continue
+    if (diffDays(p.receivedAt, today) > RULES.unmatchedLookbackDays) continue
     const candidate = paymentCandidates(full, p)[0]
     push({
       id: `bp-${p.id}`,

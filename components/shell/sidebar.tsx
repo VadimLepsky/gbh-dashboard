@@ -22,16 +22,24 @@ export function Brand() {
   )
 }
 
-export function DemoBadge({ className }: { className?: string }) {
+export function DemoBadge({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground',
+        'inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium whitespace-nowrap text-muted-foreground',
         className,
       )}
+      title="Demo · simulovaná data"
     >
       <span className="size-1.5 rounded-full bg-accent" aria-hidden />
-      Demo · simulovaná data
+      {compact ? (
+        <>
+          <span className="sm:hidden">Demo</span>
+          <span className="hidden sm:inline">Demo · simulovaná data</span>
+        </>
+      ) : (
+        'Demo · simulovaná data'
+      )}
     </span>
   )
 }

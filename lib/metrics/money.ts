@@ -4,6 +4,10 @@ import type { BankPayment, Contract, Dataset, Deal, ISODate, Invoice } from '../
 import { lookup } from './lookup'
 import { inRange, type DateRange } from './period'
 import { dealCost, median, sum, wonDeals } from './sales'
+import { RULES } from './exceptions-shared'
+
+/** A signed contract should be invoiced within this many days. */
+export const INVOICE_AFTER_SIGN_DAYS = 21
 
 export interface InvoiceFilter {
   ownerId?: string
@@ -146,16 +150,16 @@ export function deliveryChain(ds: Dataset, r: DateRange): ChainResult {
       { id: 'invoiced', label: 'Fakturováno', count: invoicedDeals.size, value: sum(invoices, (i) => i.amount) },
       { id: 'paid', label: 'Uhrazeno', count: paidDeals.size, value: sum(paid, (i) => i.amount) },
     ],
-    waitingSignature: contracts.filter((c) => !c.signedAt && diffDays(c.sentForSignatureAt, today) > 7),
+    waitingSignature: contracts.filter((c) => !c.signedAt && diffDays(c.sentForSignatureAt, today) > RULES.unsignedDays),
     signedNotInvoiced: signed.filter(
-      (c) => !(lk.invoicesByContract.get(c.id)?.length) && diffDays(c.signedAt!, today) > 14,
+      (c) => !(lk.invoicesByContract.get(c.id)?.length) && diffDays(c.signedAt!, today) > INVOICE_AFTER_SIGN_DAYS,
     ),
     overdueInChain: invoices.filter((i) => !i.paidAt && i.dueAt < today),
   }
 }
 
 /** Contracts sent for signature more than `days` ago and still unsigned (whole dataset, as of today). */
-export function unsignedContracts(ds: Dataset, days = 7): Contract[] {
+export function unsignedContracts(ds: Dataset, days: number = RULES.unsignedDays): Contract[] {
   return ds.contracts.filter((c) => !c.signedAt && diffDays(c.sentForSignatureAt, ds.today) > days)
 }
 

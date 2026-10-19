@@ -1,7 +1,7 @@
 import { addDays, diffDays, endOfMonth, minDate } from '../data/dates'
 import { paymentCandidates } from '../data/match'
 import type { Activity, BankPayment, Contract, Dataset, Deal, Invoice, Tender } from '../data/types'
-import { formatCZK, formatDate, formatDays, formatPercent } from '../format'
+import { formatCoef, formatCZK, formatDate, formatDays, formatPercent } from '../format'
 import { commissionSummary, repCommission, type CommissionLine } from './commissions'
 import type { MetricContext } from './context'
 import { renewalRate, renewalStatus, RENEWAL_STATUS_LABEL, upcomingRenewals } from './contracts'
@@ -59,6 +59,7 @@ function rangeOf(ctx: MetricContext, f: DrillRequest['filters']): DateRange & { 
   const month = str(f?.month)
   if (month) return { start: `${month}-01`, end: minDate(endOfMonth(`${month}-01`), ctx.ds.today), label: month }
   if (f?.range === 'cmp') return { start: ctx.compare.start, end: ctx.compare.asOf, label: ctx.compare.label }
+  if (f?.range === 'window') return conversionWindow(ctx.period)
   return { start: ctx.period.start, end: ctx.period.asOf, label: ctx.period.label }
 }
 
@@ -163,7 +164,7 @@ function commissionRows(ds: Dataset, lines: CommissionLine[]): DrillRow[] {
       owner: repName(ds, l.repId),
       date: l.date,
       amount: l.amount,
-      rateCoef: `${formatPercent(l.rate, 0)} × ${String(l.coefficient).replace('.', ',')}`,
+      rateCoef: `${formatPercent(l.rate, 0)} × ${formatCoef(l.coefficient)}`,
       commission: l.commission,
     },
     tone: l.kind === 'paid' ? 'positive' : undefined,

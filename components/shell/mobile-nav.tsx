@@ -14,7 +14,7 @@ export function MobileNav() {
     <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border/60 bg-sidebar/95 px-4 py-2.5 backdrop-blur lg:hidden">
       <Brand />
       <div className="flex items-center gap-1">
-        <DemoBadge className="hidden sm:inline-flex" />
+        <DemoBadge compact />
         <ThemeToggle />
         <Button variant="ghost" size="icon-sm" aria-label="Otevřít menu" onClick={() => setOpen(true)}>
           <Menu className="size-5" />

@@ -63,7 +63,7 @@ export function Delta({
   className?: string
 }) {
   if (delta === null || !Number.isFinite(delta)) {
-    return label ? <span className={cn('text-xs text-muted-foreground', className)}>{label}: bez srovnání</span> : null
+    return label ? <span className={cn('text-xs text-muted-foreground', className)}>{label}</span> : null
   }
   const Icon = delta >= 0 ? ArrowUpRight : ArrowDownRight
   const tone = good === null ? 'text-muted-foreground' : good ? 'text-positive' : 'text-negative'

@@ -159,3 +159,10 @@ export function formatValue(value: number | string | null | undefined, format: V
       return String(value)
   }
 }
+
+const coefFmt = new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: 1, maximumFractionDigits: 2 })
+
+/** KPI coefficient: `1,15`, `0,8` */
+export function formatCoef(value: number): string {
+  return coefFmt.format(value)
+}

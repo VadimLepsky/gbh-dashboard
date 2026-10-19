@@ -61,3 +61,15 @@ export function Legend({
 }
 
 export const AXIS_TICK = { fill: 'var(--muted-foreground)', fontSize: 11 }
+
+/** Round axis: 0 … max in 4–5 even steps (1, 2, 2.5 or 5 × 10ⁿ). */
+export function niceTicks(max: number, target = 4): number[] {
+  if (!Number.isFinite(max) || max <= 0) return [0, 1]
+  const raw = max / target
+  const pow = 10 ** Math.floor(Math.log10(raw))
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * pow).find((s) => s >= raw) ?? 10 * pow
+  const ticks: number[] = []
+  for (let v = 0; v <= max + step * 0.001; v += step) ticks.push(v)
+  if (ticks[ticks.length - 1] < max) ticks.push(ticks[ticks.length - 1] + step)
+  return ticks
+}
