@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/components/i18n-provider'
 
 export interface PeriodControlsProps {
   periodKey: string
@@ -24,6 +25,7 @@ export interface PeriodControlsProps {
 }
 
 export function PeriodControls(props: PeriodControlsProps) {
+  const { t } = useI18n()
   const router = useRouter()
   const pathname = usePathname()
   const params = useSearchParams()
@@ -39,7 +41,7 @@ export function PeriodControls(props: PeriodControlsProps) {
   const periodItems = [
     ...props.presets.map((p) => ({ value: p.key, label: p.label })),
     ...(isPreset || props.periodKey === 'custom' ? [] : [{ value: props.periodKey, label: props.periodLabel }]),
-    { value: 'custom', label: props.periodKey === 'custom' ? props.periodLabel : 'Vlastní…' },
+    { value: 'custom', label: props.periodKey === 'custom' ? props.periodLabel : t('shell.custom') },
   ]
 
   return (
@@ -55,7 +57,7 @@ export function PeriodControls(props: PeriodControlsProps) {
           navigate({ period: String(v), from: null, to: null })
         }}
       >
-        <SelectTrigger className="h-9 min-w-40 bg-card" aria-label="Období">
+        <SelectTrigger className="h-9 min-w-40 bg-card" aria-label={t('shell.period')}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent align="end">
@@ -71,27 +73,27 @@ export function PeriodControls(props: PeriodControlsProps) {
             <SelectItem value={props.periodKey}>{props.periodLabel}</SelectItem>
           )}
           <SelectSeparator />
-          <SelectItem value="custom">{props.periodKey === 'custom' ? props.periodLabel : 'Vlastní…'}</SelectItem>
+          <SelectItem value="custom">{props.periodKey === 'custom' ? props.periodLabel : t('shell.custom')}</SelectItem>
         </SelectContent>
       </Select>
 
       <Popover open={customOpen} onOpenChange={setCustomOpen}>
         <PopoverTrigger
           render={
-            <Button variant="outline" size="icon" className="size-9 bg-card" aria-label="Vlastní období">
+            <Button variant="outline" size="icon" className="size-9 bg-card" aria-label={t('shell.customPeriod')}>
               <CalendarRange className="size-4" />
             </Button>
           }
         />
         <PopoverContent align="end" className="w-72 gap-3 p-3">
-          <div className="text-sm font-medium">Vlastní období</div>
+          <div className="text-sm font-medium">{t('shell.customPeriod')}</div>
           <div className="grid grid-cols-2 gap-2">
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              Od
+              {t('shell.from')}
               <Input type="date" value={from} min={props.minDate} max={props.today} onChange={(e) => setFrom(e.target.value)} />
             </label>
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              Do
+              {t('shell.to')}
               <Input type="date" value={to} min={props.minDate} max={props.today} onChange={(e) => setTo(e.target.value)} />
             </label>
           </div>
@@ -103,7 +105,7 @@ export function PeriodControls(props: PeriodControlsProps) {
               navigate({ period: 'custom', from, to })
             }}
           >
-            Použít
+            {t('shell.apply')}
           </Button>
         </PopoverContent>
       </Popover>
@@ -114,7 +116,7 @@ export function PeriodControls(props: PeriodControlsProps) {
           items={props.compareOptions.map((o) => ({ value: o.key, label: o.label }))}
           onValueChange={(v) => navigate({ cmp: v === 'prev' ? null : String(v) })}
         >
-          <SelectTrigger className="h-9 min-w-44 bg-card" aria-label="Porovnání">
+          <SelectTrigger className="h-9 min-w-44 bg-card" aria-label={t('shell.compare')}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent align="end">

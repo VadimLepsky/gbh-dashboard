@@ -1,4 +1,7 @@
+'use client'
+
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/components/i18n-provider'
 
 /** Tiny trend line: thin stroke, last point marked. Server-renderable SVG. */
 export function Sparkline({
@@ -57,6 +60,7 @@ export function MiniBars({
   guide?: number
   className?: string
 }) {
+  const { f } = useI18n()
   const max = Math.max(guide * 1.3, ...values.map((v) => v.value ?? 0))
   return (
     <div className={cn('relative flex h-7 items-end gap-[3px]', className)}>
@@ -67,7 +71,7 @@ export function MiniBars({
         return (
           <div
             key={v.label}
-            title={`${v.label}: ${v.value === null ? '—' : Math.round(val * 100) + ' %'}`}
+            title={`${v.label}: ${v.value === null ? '—' : f.formatPercent(val, 0)}`}
             className={cn('w-2.5 rounded-t-[3px]', tone)}
             style={{ height: `${Math.max(6, (val / max) * 100)}%` }}
           />

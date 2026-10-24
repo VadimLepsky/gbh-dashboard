@@ -1,38 +1,32 @@
 import type { Metadata } from 'next'
-import { buildContext } from '@/lib/metrics/context'
+import { pageContext, pageMetadata, type PageProps } from '@/lib/page'
 import { conversionBySource, conversionWindow, cycleBy, leaks, lostByReason, stageConversions } from '@/lib/metrics/conversion'
 import { lookup } from '@/lib/metrics/lookup'
 import { OPEN_STAGES } from '@/lib/data/types'
-import { formatCZK, formatCZKCompact, formatDays, formatNumber, formatPercent } from '@/lib/format'
 import { PageHeader } from '@/components/shell/page-header'
 import { EmptyState, Section } from '@/components/dashboard/primitives'
 import { DataTable, Td, Th } from '@/components/dashboard/table'
 import { DrillButton } from '@/components/drill/drill-trigger'
 import { Legend } from '@/components/charts/chart-kit'
 
-export const metadata: Metadata = { title: 'Konverze a úniky' }
+export function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  return pageMetadata(params, 'nav.items.conversion')
+}
 
 /** Fewer closed stages than this → shown, but greyed out as too little data. */
 const MIN_SAMPLE = 5
 
-const STAGE_SHORT: Record<string, string> = {
-  Kontakt: 'Kontakt → Kval.',
-  Kvalifikace: 'Kval. → Nabídka',
-  Nabídka: 'Nabídka → Vyjedn.',
-  Vyjednávání: 'Vyjedn. → Smlouva',
-  'Smlouva k podpisu': 'Smlouva → Vyhráno',
-}
-
-export default async function ConversionPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const ctx = buildContext(await searchParams)
+export default async function ConversionPage(props: PageProps) {
+  const { ctx, i18n, t, tn, term, f } = await pageContext(props)
+  const { formatCZK, formatCZKCompact, formatDays, formatPercent } = f
   const { ds, period } = ctx
-  const window = conversionWindow(period)
-  const matrix = conversionBySource(ds, window)
+  const window = conversionWindow(period, i18n)
+  const matrix = conversionBySource(ds, window, i18n)
   const avg = stageConversions(ds, window)
   const reasons = lostByReason(ds, window)
-  const bySource = cycleBy(ds, window, 'source')
-  const byType = cycleBy(ds, window, 'institutionType')
-  const top = leaks(ds, window, 5)
+  const bySource = cycleBy(ds, window, 'source', i18n)
+  const byType = cycleBy(ds, window, 'institutionType', i18n)
+  const top = leaks(ds, window, 5, i18n)
   const lk = lookup(ds)
   const totalLost = reasons.reduce((s, r) => s + r.value, 0)
   const won = matrix.reduce((s, r) => s + (r.winRate ?? 0) * r.closed, 0)
@@ -48,27 +42,27 @@ export default async function ConversionPage({ searchParams }: { searchParams: P
 
   return (
     <>
-      <PageHeader ctx={ctx} title="Konverze a úniky" description="Kde nám utíkají peníze" hideCompare />
+      <PageHeader ctx={ctx} title={t('nav.items.conversion')} description={t('pages.conversion.description')} hideCompare />
       {window.widened && (
         <p className="-mt-3 mb-4 text-xs text-muted-foreground">
-          Konverze potřebují dost uzavřených fází, proto tato stránka počítá za {window.label}.
+          {t('pages.conversion.widened', { window: window.label })}
         </p>
       )}
 
       <Section
-        title="Konverze mezi fázemi podle zdroje leadu"
-        description="Barva = rozdíl proti průměru dané fáze (zeleně lépe, červeně hůř). V závorce počet dealů, které fázi opustily."
+        title={t('pages.conversion.matrix')}
+        description={t('pages.conversion.matrixDesc')}
       >
         <DataTable minWidth={860}>
           <thead>
             <tr>
-              <Th>Zdroj</Th>
+              <Th>{t('pages.conversion.source')}</Th>
               {OPEN_STAGES.map((s) => (
                 <Th key={s} align="right">
-                  {STAGE_SHORT[s]}
+                  {t(`pages.conversion.stageShort.${s}`)}
                 </Th>
               ))}
-              <Th align="right">Win rate</Th>
+              <Th align="right">{t('pages.conversion.winRate')}</Th>
             </tr>
           </thead>
           <tbody>
@@ -100,7 +94,7 @@ export default async function ConversionPage({ searchParams }: { searchParams: P
           </tbody>
           <tfoot>
             <tr className="bg-surface">
-              <Td className="font-medium">Průměr</Td>
+              <Td className="font-medium">{t('pages.conversion.average')}</Td>
               {avg.map((c) => (
                 <Td key={c.stage} align="right" className="font-medium">
                   {c.rate === null ? '—' : formatPercent(c.rate, 0)}
@@ -115,9 +109,9 @@ export default async function ConversionPage({ searchParams }: { searchParams: P
         </DataTable>
       </Section>
 
-      <Section className="mt-3" title="Top 5 úniků v Kč" description="Očekávaná ztracená tržba proti průměrné konverzi fáze (dealy, které měly postoupit, × pravděpodobnost další fáze) · doporučený krok podle pravidel">
+      <Section className="mt-3" title={t('pages.conversion.leaks')} description={t('pages.conversion.leaksDesc')}>
         {top.length === 0 ? (
-          <EmptyState title="Žádné výrazné úniky">V okně je málo uzavřených fází nebo jsou všechny kolem průměru.</EmptyState>
+          <EmptyState title={t('pages.conversion.noLeaks')}>{t('pages.conversion.noLeaksText')}</EmptyState>
         ) : (
           <ol className={top.length === 5 ? 'grid gap-2 md:grid-cols-2 lg:grid-cols-6 2xl:grid-cols-5' : 'grid gap-2 md:grid-cols-2 xl:grid-cols-3'}>
             {top.map((l, i) => (
@@ -126,24 +120,24 @@ export default async function ConversionPage({ searchParams }: { searchParams: P
                   req={{
                     metric: 'stage_cohort',
                     filters: { stage: l.stage, ...(l.dimension === 'source' ? { sourceId: l.key } : { ownerId: l.key }) },
-                    title: `Únik · ${l.stage} × ${l.label}`,
+                    title: t('pages.conversion.leakTitle', { stage: term('stage', l.stage), label: l.label }),
                   }}
                   className="flex h-full w-full flex-col gap-2 rounded-lg bg-surface p-3.5 ring-1 ring-foreground/[0.05] transition-colors hover:bg-muted/60"
                 >
                   <span className="flex items-start justify-between gap-2">
                     <span className="text-xs text-muted-foreground">
-                      {i + 1}. {l.stage} × {l.dimension === 'source' ? 'zdroj' : 'obchodník'}
+                      {i + 1}. {term('stage', l.stage)} × {t(l.dimension === 'source' ? 'pages.conversion.dimSource' : 'pages.conversion.dimOwner')}
                     </span>
                     <span className="tabular text-sm font-semibold text-negative">−{formatCZKCompact(l.amount)}</span>
                   </span>
                   <span className="text-[13.5px] font-medium">{l.label}</span>
                   <span className="text-xs text-muted-foreground">
-                    Konverze {formatPercent(l.rate, 0)} vs. průměr {formatPercent(l.avgRate, 0)} · {l.left} dealů
-                    {l.topReason ? ` · nejčastěji „${l.topReason}“` : ''}
+                    {t('pages.conversion.leakStats', { rate: formatPercent(l.rate, 0), avg: formatPercent(l.avgRate, 0), deals: f.formatCount(l.left, 'deals') })}
+                    {l.topReason ? t('pages.conversion.leakReason', { reason: term('lostReason', l.topReason) }) : ''}
                   </span>
                   <span className="mt-auto border-t border-border/60 pt-2 text-xs leading-relaxed">
-                    <span className="font-medium">Doporučení:</span> {l.action}
-                    <span className="block text-muted-foreground">Vlastník: {l.ownerId ? lk.rep.get(l.ownerId)?.name : '—'}</span>
+                    <span className="font-medium">{t('pages.conversion.recommendation')}</span> {l.action}
+                    <span className="block text-muted-foreground">{t('pages.conversion.owner', { name: l.ownerId ? lk.rep.get(l.ownerId)?.name ?? '—' : '—' })}</span>
                   </span>
                 </DrillButton>
               </li>
@@ -153,45 +147,48 @@ export default async function ConversionPage({ searchParams }: { searchParams: P
       </Section>
 
       <div className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-3">
-        <Section title="Prohrané dealy podle důvodu" description={`Ztracená hodnota ${formatCZK(totalLost)}`}>
+        <Section title={t('pages.conversion.lostByReason')} description={t('pages.conversion.lostValue', { value: formatCZK(totalLost) })}>
           <Bars
             rows={reasons.map((r) => ({
               key: r.reason,
-              label: r.reason,
+              label: term('lostReason', r.reason),
               value: r.value,
               text: formatCZKCompact(r.value),
-              sub: `${formatNumber(r.count)} dealů`,
+              sub: tn('drill.count.deals', r.count),
               req: { metric: 'lost', filters: { reason: r.reason, range: 'window' } },
             }))}
             color="var(--chart-2)"
+            empty={t('pages.conversion.noData')}
           />
         </Section>
-        <Section title="Délka cyklu podle zdroje" description="Medián dní od založení po výhru">
+        <Section title={t('pages.conversion.cycleSource')} description={t('pages.conversion.cycleDesc')}>
           <Bars
             rows={bySource.map((g) => ({
               key: g.key,
               label: g.label,
               value: g.median ?? 0,
               text: formatDays(g.median),
-              sub: `${g.count} výher`,
+              sub: tn('pages.conversion.wins', g.count),
               req: { metric: 'cycle', filters: { sourceId: g.key } },
             }))}
             color="var(--chart-7)"
+            empty={t('pages.conversion.noData')}
           />
         </Section>
-        <Section title="Délka cyklu podle typu instituce" description="Medián dní od založení po výhru">
+        <Section title={t('pages.conversion.cycleType')} description={t('pages.conversion.cycleDesc')}>
           <Bars
             rows={byType.map((g) => ({
               key: g.key,
               label: g.label,
               value: g.median ?? 0,
               text: formatDays(g.median),
-              sub: `${g.count} výher`,
+              sub: tn('pages.conversion.wins', g.count),
               req: { metric: 'cycle', filters: { institutionType: g.key } },
             }))}
             color="var(--chart-7)"
+            empty={t('pages.conversion.noData')}
           />
-          <Legend className="mt-3" items={[{ label: 'Medián dní', color: 'var(--chart-7)' }]} />
+          <Legend className="mt-3" items={[{ label: t('pages.conversion.medianDays'), color: 'var(--chart-7)' }]} />
         </Section>
       </div>
     </>
@@ -201,11 +198,13 @@ export default async function ConversionPage({ searchParams }: { searchParams: P
 function Bars({
   rows,
   color,
+  empty,
 }: {
   rows: { key: string; label: string; value: number; text: string; sub: string; req: { metric: string; filters: Record<string, string> } }[]
   color: string
+  empty: string
 }) {
-  if (!rows.length) return <EmptyState title="Bez dat v okně" />
+  if (!rows.length) return <EmptyState title={empty} />
   const max = Math.max(...rows.map((r) => r.value), 1)
   return (
     <div className="flex flex-col gap-2.5">

@@ -65,10 +65,11 @@ export function dso(ds: Dataset, r: DateRange, f?: InvoiceFilter): number | null
 // ── Aging ───────────────────────────────────────────────────────────────────
 
 export const AGING_BUCKETS = [
-  { id: 'current', label: 'Ve splatnosti', min: -Infinity, max: 0 },
-  { id: '1-30', label: '1–30 dní', min: 1, max: 30 },
-  { id: '31-60', label: '31–60 dní', min: 31, max: 60 },
-  { id: '60+', label: '60+ dní', min: 61, max: Infinity },
+  // Labels: `aging.<id>` in the dictionaries.
+  { id: 'current', min: -Infinity, max: 0 },
+  { id: '1-30', min: 1, max: 30 },
+  { id: '31-60', min: 31, max: 60 },
+  { id: '60+', min: 61, max: Infinity },
 ] as const
 
 export type AgingBucketId = (typeof AGING_BUCKETS)[number]['id']
@@ -119,8 +120,8 @@ export function aging(ds: Dataset, asOf: ISODate) {
 // ── Delivery chain: Vyhráno → Smlouva podepsána → Fakturováno → Uhrazeno ──
 
 export interface ChainStep {
+  /** Label: `chain.<id>` in the dictionaries. */
   id: 'won' | 'signed' | 'invoiced' | 'paid'
-  label: string
   count: number
   value: number
 }
@@ -145,10 +146,10 @@ export function deliveryChain(ds: Dataset, r: DateRange): ChainResult {
   const today = ds.today
   return {
     steps: [
-      { id: 'won', label: 'Vyhráno', count: won.length, value: sum(won, (d) => d.value) },
-      { id: 'signed', label: 'Smlouva podepsána', count: signed.length, value: sum(signed, (c) => lk.deal.get(c.dealId)!.value) },
-      { id: 'invoiced', label: 'Fakturováno', count: invoicedDeals.size, value: sum(invoices, (i) => i.amount) },
-      { id: 'paid', label: 'Uhrazeno', count: paidDeals.size, value: sum(paid, (i) => i.amount) },
+      { id: 'won', count: won.length, value: sum(won, (d) => d.value) },
+      { id: 'signed', count: signed.length, value: sum(signed, (c) => lk.deal.get(c.dealId)!.value) },
+      { id: 'invoiced', count: invoicedDeals.size, value: sum(invoices, (i) => i.amount) },
+      { id: 'paid', count: paidDeals.size, value: sum(paid, (i) => i.amount) },
     ],
     waitingSignature: contracts.filter((c) => !c.signedAt && diffDays(c.sentForSignatureAt, today) > RULES.unsignedDays),
     signedNotInvoiced: signed.filter(

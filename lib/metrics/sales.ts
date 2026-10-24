@@ -3,6 +3,9 @@ import { STAGE_PROBABILITY } from '../data/reference'
 import type { Dataset, Deal, ISODate, Stage } from '../data/types'
 import { lookup } from './lookup'
 import { inRange, monthsOf, type DateRange, type Period } from './period'
+import { STUCK_FACTOR } from './constants'
+
+export { STUCK_FACTOR }
 
 export interface DealFilter {
   ownerId?: string
@@ -244,8 +247,6 @@ export function daysInStage(d: Deal, today: ISODate): number {
   return toDay(today) - toDay(last.enteredAt)
 }
 
-/** A deal is stuck after this many typical stage durations. */
-export const STUCK_FACTOR = 2
 
 export function isStuck(ds: Dataset, d: Deal): boolean {
   return isOpen(d) && daysInStage(d, ds.today) > STUCK_FACTOR * medianForDeal(ds, d)

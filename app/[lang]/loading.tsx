@@ -1,8 +1,12 @@
+'use client'
+
 import { Skeleton } from '@/components/ui/skeleton'
+import { useI18n } from '@/components/i18n-provider'
 
 export default function Loading() {
+  const { t } = useI18n()
   return (
-    <div aria-busy="true" aria-label="Načítám" className="flex flex-col gap-3">
+    <div aria-busy="true" aria-label={t('shell.loading')} className="flex flex-col gap-3">
       <div className="mb-3 flex flex-col gap-2">
         <Skeleton className="h-7 w-48" />
         <Skeleton className="h-4 w-80" />

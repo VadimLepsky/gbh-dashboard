@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { fetchDrill } from '@/app/actions'
 import type { DrillRequest, DrillResult } from '@/lib/metrics/drill-types'
+import { useI18n } from '@/components/i18n-provider'
 import { DrillSheet } from './drill-sheet'
 
 interface DrillState {
@@ -26,6 +27,7 @@ export function useDrill(): DrillApi {
 }
 
 export function DrillProvider({ children }: { children: React.ReactNode }) {
+  const { locale } = useI18n()
   const params = useSearchParams()
   const [stack, setStack] = useState<DrillState[]>([])
   const [open, setOpen] = useState(false)
@@ -41,7 +43,7 @@ export function DrillProvider({ children }: { children: React.ReactNode }) {
         cmp: params.get('cmp') ?? undefined,
         as: params.get('as') ?? undefined,
       }
-      fetchDrill(req, query)
+      fetchDrill(req, query, locale)
         .then((result) => {
           if (id !== seq.current) return
           setStack((s) => s.map((item, i) => (i === depth ? { ...item, result } : item)))
@@ -51,7 +53,7 @@ export function DrillProvider({ children }: { children: React.ReactNode }) {
           setStack((s) => s.map((item, i) => (i === depth ? { ...item, error: true } : item)))
         })
     },
-    [params],
+    [params, locale],
   )
 
   const openDrill = useCallback(

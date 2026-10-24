@@ -1,5 +1,6 @@
 import type { ValueFormat } from '../format'
-import { METRICS, type MetricId } from './dictionary'
+import type { I18n } from '../i18n/core'
+import { METRICS, metricText, type MetricId } from './dictionary'
 import type { DrillRequest } from './drill-types'
 
 export interface Kpi {
@@ -23,6 +24,7 @@ export interface Kpi {
 }
 
 export function makeKpi(
+  i18n: I18n,
   id: MetricId,
   value: number | null,
   compare: number | null,
@@ -31,6 +33,7 @@ export function makeKpi(
   extra: Partial<Kpi> = {},
 ): Kpi {
   const def = METRICS[id]
+  const text = metricText(i18n, id)
   const deltaKind: Kpi['deltaKind'] = def.unit === 'percent' ? 'points' : def.unit === 'days' ? 'absolute' : 'relative'
   let delta: number | null = null
   if (value !== null && compare !== null) {
@@ -40,8 +43,8 @@ export function makeKpi(
   const good = delta === null || Math.abs(delta) < 1e-9 ? null : (delta > 0) === (def.goodDirection === 'up')
   return {
     id,
-    label: def.label,
-    definition: def.definition,
+    label: text.label,
+    definition: text.definition,
     value,
     format: def.unit,
     compare,

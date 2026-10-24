@@ -1,19 +1,21 @@
 'use client'
 
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { formatDays, formatMonth, formatMonthShort } from '@/lib/format'
 import { useDrill } from '@/components/drill/drill-provider'
 import { AXIS_TICK, Legend, TooltipCard } from './chart-kit'
+import { useI18n } from '@/components/i18n-provider'
 
 export function DsoChart({ data, term, height = 200 }: { data: { ym: string; value: number | null }[]; term: number; height?: number }) {
   const { openDrill } = useDrill()
+  const { t, f } = useI18n()
+  const { formatDays, formatMonth, formatMonthShort } = f
   const rows = data.map((d) => ({ ...d, label: formatMonthShort(d.ym, d.ym.endsWith('-01')) }))
   return (
     <div className="flex flex-col gap-3">
       <Legend
         items={[
-          { label: 'DSO (dní do úhrady)', color: 'var(--chart-1)', line: true },
-          { label: 'Splatnost faktur', color: 'var(--foreground)', dashed: true },
+          { label: t('ui.chart.dsoLegend'), color: 'var(--chart-1)', line: true },
+          { label: t('ui.chart.termLegend'), color: 'var(--foreground)', dashed: true },
         ]}
       />
       <div style={{ height }} className="-ml-2">
@@ -23,7 +25,7 @@ export function DsoChart({ data, term, height = 200 }: { data: { ym: string; val
             margin={{ top: 8, right: 12, bottom: 0, left: 0 }}
             onClick={(state) => {
               const idx = Number(state?.activeTooltipIndex ?? -1)
-              if (idx >= 0 && rows[idx]) openDrill({ metric: 'dso', filters: { month: rows[idx].ym }, title: `DSO · ${formatMonth(rows[idx].ym)}` })
+              if (idx >= 0 && rows[idx]) openDrill({ metric: 'dso', filters: { month: rows[idx].ym }, title: t('ui.chart.dsoTitle', { month: formatMonth(rows[idx].ym) }) })
             }}
           >
             <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
@@ -37,9 +39,9 @@ export function DsoChart({ data, term, height = 200 }: { data: { ym: string; val
                     title={formatMonth(String(payload[0].payload.ym))}
                     rows={[
                       { label: 'DSO', value: formatDays(payload[0].value as number | null), color: 'var(--chart-1)', line: true },
-                      { label: 'Splatnost', value: formatDays(term), color: 'var(--foreground)', dashed: true },
+                      { label: t('ui.chart.term'), value: formatDays(term), color: 'var(--foreground)', dashed: true },
                     ]}
-                    footer="Klikněte pro uhrazené faktury"
+                    footer={t('ui.chart.dsoFooter')}
                   />
                 ) : null
               }

@@ -1,0 +1,1184 @@
+{
+  "format": {
+    "months": [
+      "leden",
+      "únor",
+      "březen",
+      "duben",
+      "květen",
+      "červen",
+      "červenec",
+      "srpen",
+      "září",
+      "říjen",
+      "listopad",
+      "prosinec"
+    ],
+    "monthsShort": [
+      "led",
+      "úno",
+      "bře",
+      "dub",
+      "kvě",
+      "čvn",
+      "čvc",
+      "srp",
+      "zář",
+      "říj",
+      "lis",
+      "pro"
+    ],
+    "pointsUnit": "p. b."
+  },
+  "units": {
+    "days": {
+      "one": "den",
+      "few": "dny",
+      "many": "dne",
+      "other": "dní"
+    },
+    "deals": {
+      "one": "deal",
+      "few": "dealy",
+      "many": "dealu",
+      "other": "dealů"
+    },
+    "invoices": {
+      "one": "faktura",
+      "few": "faktury",
+      "many": "faktury",
+      "other": "faktur"
+    },
+    "followups": {
+      "one": "follow-up",
+      "few": "follow-upy",
+      "many": "follow-upu",
+      "other": "follow-upů"
+    },
+    "dealsGen": {
+      "one": "dealu",
+      "few": "dealů",
+      "many": "dealu",
+      "other": "dealů"
+    },
+    "items": {
+      "one": "položka",
+      "few": "položky",
+      "many": "položky",
+      "other": "položek"
+    },
+    "reps": {
+      "one": "obchodník",
+      "few": "obchodníci",
+      "many": "obchodníka",
+      "other": "obchodníků"
+    },
+    "payments": {
+      "one": "platba",
+      "few": "platby",
+      "many": "platby",
+      "other": "plateb"
+    }
+  },
+  "metrics": {
+    "revenue_won": {
+      "label": "Prodáno",
+      "definition": "Hodnota dealů, které jsme v daném období uzavřeli jako vyhrané.",
+      "formula": "Σ hodnota dealů ve fázi Vyhráno s datem uzavření v období"
+    },
+    "invoiced": {
+      "label": "Fakturováno",
+      "definition": "Součet faktur, které jsme v období vystavili.",
+      "formula": "Σ částka faktur s datem vystavení v období"
+    },
+    "collected": {
+      "label": "Uhrazeno",
+      "definition": "Peníze, které za faktury skutečně dorazily na účet v daném období.",
+      "formula": "Σ částka faktur s datem úhrady v období"
+    },
+    "receivables": {
+      "label": "Pohledávky",
+      "definition": "Vystavené faktury, které ke konci období ještě nebyly zaplacené.",
+      "formula": "Σ neuhrazených faktur ke konci období"
+    },
+    "overdue": {
+      "label": "Po splatnosti",
+      "definition": "Nezaplacené faktury, kterým už uplynulo datum splatnosti.",
+      "formula": "Σ neuhrazených faktur s datem splatnosti před koncem období"
+    },
+    "dso": {
+      "label": "DSO",
+      "definition": "Průměrný počet dní od vystavení faktury do jejího zaplacení.",
+      "formula": "průměr (datum úhrady − datum vystavení) u faktur uhrazených v období"
+    },
+    "pipeline": {
+      "label": "Pipeline",
+      "definition": "Celková hodnota všech otevřených dealů.",
+      "formula": "Σ hodnota otevřených dealů"
+    },
+    "weighted_forecast": {
+      "label": "Vážená prognóza",
+      "definition": "Odhad prodeje za období: co už je vyhrané plus otevřené dealy vážené pravděpodobností své fáze.",
+      "formula": "vyhráno v období + Σ hodnota × pravděpodobnost fáze u otevřených dealů s očekávaným uzavřením v období"
+    },
+    "plan": {
+      "label": "Plán",
+      "definition": "Prodejní cíl pro zvolený tým a období.",
+      "formula": "Σ měsíční kvóta obchodníků × podíl měsíce v období"
+    },
+    "attainment": {
+      "label": "Plnění plánu",
+      "definition": "Jakou část plánu už máme prodanou.",
+      "formula": "Prodáno / Plán"
+    },
+    "coverage": {
+      "label": "Krytí pipeline",
+      "definition": "Kolikrát otevřená pipeline s uzavřením v období pokrývá část plánu, která ještě chybí.",
+      "formula": "pipeline s očekávaným uzavřením v období / (Plán − Prodáno)"
+    },
+    "win_rate": {
+      "label": "Win rate",
+      "definition": "Podíl vyhraných dealů ze všech dealů uzavřených v období.",
+      "formula": "vyhrané / (vyhrané + prohrané), uzavřené v období"
+    },
+    "cycle_days": {
+      "label": "Délka cyklu",
+      "definition": "Typická doba od založení dealu po jeho vyhrání.",
+      "formula": "medián dní od založení po uzavření u vyhraných dealů"
+    },
+    "avg_deal": {
+      "label": "Průměrný deal",
+      "definition": "Průměrná hodnota jednoho vyhraného dealu.",
+      "formula": "Prodáno / počet vyhraných dealů"
+    },
+    "gross_margin": {
+      "label": "Hrubá marže",
+      "definition": "Kolik z prodeje zůstane po odečtení přímých nákladů (lektoři, cesty, materiály).",
+      "formula": "(tržba − náklady podle produktu) / tržba"
+    },
+    "activities_done": {
+      "label": "Splněné aktivity",
+      "definition": "Kolik hovorů, e-mailů, schůzek a follow-upů obchodníci v období dokončili vůči cíli.",
+      "formula": "počet aktivit s datem splnění v období / cíl aktivit za období"
+    },
+    "overdue_followups": {
+      "label": "Zpožděné follow-upy",
+      "definition": "Naplánované aktivity, jejichž termín už uplynul a nikdo je neudělal.",
+      "formula": "aktivity s termínem před dneškem a bez data splnění"
+    },
+    "no_next_step": {
+      "label": "Bez dalšího kroku",
+      "definition": "Otevřené dealy, které nemají naplánovaný další krok, nebo ho mají v minulosti.",
+      "formula": "otevřené dealy s dalším krokem = prázdný nebo před dneškem"
+    },
+    "stuck_deals": {
+      "label": "Zaseknuté dealy",
+      "definition": "Otevřené dealy, které jsou v aktuální fázi výrazně déle než obvykle.",
+      "formula": "dny v aktuální fázi > {factor} × medián dané fáze (veřejné zakázky se srovnávají zvlášť)"
+    },
+    "commission_payable": {
+      "label": "Provize k výplatě",
+      "definition": "Provize z faktur, které klient v období zaplatil. Provize vzniká úhradou faktury.",
+      "formula": "Σ uhrazená tržba × základní sazba × koeficient KPI za měsíc úhrady"
+    },
+    "commission_pending": {
+      "label": "Čekající provize",
+      "definition": "Provize z vyhraných zakázek, které ještě nejsou zaplacené (nevyfakturované nebo neuhrazené).",
+      "formula": "Σ (nevyfakturovaná + neuhrazená částka) × základní sazba × aktuální koeficient KPI"
+    },
+    "renewal_rate": {
+      "label": "Míra obnovy",
+      "definition": "Kolik ročních smluv, které za posledních {months} měsíců skončily, jsme obnovili.",
+      "formula": "obnovené smlouvy / smlouvy s koncem v posledních {months} měsících"
+    },
+    "tender_win_rate": {
+      "label": "Úspěšnost zakázek",
+      "definition": "Podíl vyhraných veřejných zakázek ze všech rozhodnutých.",
+      "formula": "vyhrané / (vyhrané + prohrané) zakázky"
+    },
+    "unmatched_payments": {
+      "label": "Nespárované platby",
+      "definition": "Platby na účtu, které nejdou automaticky přiřadit k faktuře (chybný variabilní symbol).",
+      "formula": "počet bankovních plateb bez spárované faktury"
+    }
+  },
+  "period": {
+    "year": "Rok {year}",
+    "yearLower": "rok {year}",
+    "presets": {
+      "thisMonth": "Tento měsíc",
+      "lastMonth": "Minulý měsíc",
+      "quarter": "Kvartál",
+      "year": "Rok"
+    }
+  },
+  "compare": {
+    "vsPlan": "vs. plán",
+    "vs": "vs. {label}",
+    "options": {
+      "prev": "vs. předchozí období",
+      "plan": "vs. plán",
+      "yoy": "vs. loni"
+    }
+  },
+  "viewAs": {
+    "reditel": {
+      "label": "Ředitel obchodu",
+      "short": "Celá firma"
+    },
+    "morava": {
+      "label": "Vedoucí týmu Morava",
+      "short": "Tým Morava"
+    },
+    "novak": {
+      "label": "Jakub Novák (obchodník)",
+      "short": "Jen vlastní data"
+    }
+  },
+  "terms": {
+    "stage": {
+      "Kontakt": "Kontakt",
+      "Kvalifikace": "Kvalifikace",
+      "Nabídka": "Nabídka",
+      "Vyjednávání": "Vyjednávání",
+      "Smlouva k podpisu": "Smlouva k podpisu",
+      "Vyhráno": "Vyhráno",
+      "Prohráno": "Prohráno"
+    },
+    "lostReason": {
+      "Cena": "Cena",
+      "Rozpočet zmrazen": "Rozpočet zmrazen",
+      "Vybrán konkurent": "Vybrán konkurent",
+      "Bez odezvy": "Bez odezvy",
+      "Zrušená zakázka": "Zrušená zakázka"
+    },
+    "source": {
+      "cold_call": "Cold call",
+      "webinar": "Webinář",
+      "referral": "Doporučení",
+      "tender": "Veřejná zakázka",
+      "inbound": "Web / inbound",
+      "fair": "Veletrh"
+    },
+    "product": {
+      "kyber": "Kybernetická bezpečnost pro zaměstnance",
+      "krize": "Krizové řízení a evakuace",
+      "objekty": "Ochrana objektů a osob",
+      "utocnik": "Útok aktivního útočníka",
+      "management": "Bezpečnostní management pro vedoucí",
+      "ramcova": "Roční rámcová smlouva"
+    },
+    "productShort": {
+      "kyber": "Kyberbezpečnost",
+      "krize": "Krizové řízení",
+      "objekty": "Ochrana objektů",
+      "utocnik": "Aktivní útočník",
+      "management": "Management",
+      "ramcova": "Rámcová smlouva"
+    },
+    "tenderTitle": {
+      "Kybernetická bezpečnost pro zaměstnance": "Kybernetická bezpečnost pro zaměstnance",
+      "Krizové řízení a evakuace": "Krizové řízení a evakuace",
+      "Ochrana objektů a osob": "Ochrana objektů a osob",
+      "Útok aktivního útočníka": "Útok aktivního útočníka",
+      "Bezpečnostní management pro vedoucí": "Bezpečnostní management pro vedoucí",
+      "Roční rámcová smlouva": "Roční rámcová smlouva"
+    },
+    "role": {
+      "Senior": "Senior",
+      "Obchodník": "Obchodník",
+      "Junior": "Junior"
+    },
+    "institutionType": {
+      "Ministerstvo": "Ministerstvo",
+      "Krajský úřad": "Krajský úřad",
+      "Městský úřad": "Městský úřad",
+      "Nemocnice": "Nemocnice",
+      "Škola": "Škola",
+      "Složka IZS": "Složka IZS",
+      "Státní podnik": "Státní podnik"
+    },
+    "activity": {
+      "hovor": "Hovor",
+      "e-mail": "E-mail",
+      "schůzka": "Schůzka",
+      "follow-up": "Follow-up"
+    },
+    "tenderStatus": {
+      "příprava": "příprava",
+      "podáno": "podáno",
+      "vyhráno": "vyhráno",
+      "prohráno": "prohráno"
+    },
+    "renewalStatus": {
+      "bez-obnovy": "Bez obnovy",
+      "v-jednani": "V jednání",
+      "obnoveno": "Obnoveno",
+      "ztraceno": "Ztraceno"
+    },
+    "nextStep": {
+      "Kvalifikační hovor": "Kvalifikační hovor",
+      "Zjistit odpovědnou osobu": "Zjistit odpovědnou osobu",
+      "Úvodní schůzka": "Úvodní schůzka",
+      "Schůzka s vedením": "Schůzka s vedením",
+      "Ověřit rozpočet": "Ověřit rozpočet",
+      "Analýza potřeb": "Analýza potřeb",
+      "Odeslat nabídku": "Odeslat nabídku",
+      "Prezentace nabídky": "Prezentace nabídky",
+      "Doplnit referenční list": "Doplnit referenční list",
+      "Jednání o ceně": "Jednání o ceně",
+      "Upravit rozsah školení": "Upravit rozsah školení",
+      "Schůzka s ekonomem": "Schůzka s ekonomem",
+      "Připomínky ke smlouvě": "Připomínky ke smlouvě",
+      "Urgovat podpis": "Urgovat podpis",
+      "Ověřit podpisové právo": "Ověřit podpisové právo",
+      "Dokončit nabídku do VZ": "Dokončit nabídku do VZ"
+    },
+    "team": {
+      "cechy": "Čechy",
+      "morava": "Morava"
+    }
+  },
+  "exceptions": {
+    "types": {
+      "overdue_invoice": "Faktura po splatnosti",
+      "stuck_deal": "Zaseknutý deal",
+      "no_next_step": "Bez dalšího kroku",
+      "overdue_followups": "Zpožděné follow-upy",
+      "unsigned_contract": "Nepodepsaná smlouva",
+      "renewal_risk": "Obnova bez dealu",
+      "tender_deadline": "Termín zakázky",
+      "low_activity": "Nízká aktivita",
+      "unmatched_payment": "Nespárovaná platba"
+    },
+    "rules": {
+      "overdue_invoice": "Faktura více než {days} dní po splatnosti",
+      "stuck_deal": "Zaseknutý deal: ve fázi déle než {factor}× medián",
+      "no_next_step": "Otevřený deal bez dalšího kroku nebo s krokem v minulosti",
+      "overdue_followups": "Obchodník s {min} a více zpožděnými follow-upy",
+      "unsigned_contract": "Smlouva nepodepsaná déle než {days} dní",
+      "renewal_risk": "Roční smlouva končí do {days} dní a obnova není založená",
+      "tender_deadline": "Veřejná zakázka s termínem do {days} dní ve stavu příprava",
+      "low_activity": "Obchodník pod {pct} cíle aktivit za {weeks} týdny",
+      "unmatched_payment": "Platba na účtu bez spárované faktury"
+    },
+    "detail": {
+      "overdueInvoice": "{late} po splatnosti (splatná {due})",
+      "stuck": "{days} ve fázi {stage} (obvykle {typical})",
+      "nextStepWas": "Další krok měl být {date} · {stage}",
+      "noStep": "Bez naplánovaného kroku · {stage}",
+      "followups": "Nejstarší z {date}, týká se {deals}",
+      "unsigned": "Odesláno k podpisu {date} ({days})",
+      "renewalObject": "{institution} · rámcová smlouva",
+      "renewal": "Končí {date} (za {days}), obnova není založená",
+      "tender": "Podání do {date} (za {days}), stav příprava",
+      "lowActivity": "{done} z {target} aktivit za {weeks} týdny ({pct} cíle)",
+      "paymentObject": "Platba {date} · VS {vs}",
+      "paymentCandidate": "Pravděpodobně {invoice} ({institution}), shoda částky",
+      "paymentNoCandidate": "Plátce: {payer}, žádná faktura se stejnou částkou"
+    },
+    "action": {
+      "invoiceCollect": "Předat k vymáhání, informovat vedení klienta",
+      "invoiceRemind": "Upomínka a telefonát na účtárnu klienta",
+      "stuck": {
+        "Kontakt": "Ověřit zájem, nebo deal uzavřít jako prohraný",
+        "Kvalifikace": "Domluvit schůzku s rozhodovatelem",
+        "Nabídka": "Zavolat k nabídce, zjistit námitky",
+        "Vyjednávání": "Eskalovat: schůzka vedoucího s klientem",
+        "Smlouva k podpisu": "Urgovat podpis u statutára"
+      },
+      "planStep": "Naplánovat další krok s klientem",
+      "followups": "Dokončit zpožděné follow-upy dnes, zbytek přeplánovat",
+      "unsigned": "Urgovat podpis, ověřit podpisové právo",
+      "renewal": "Založit deal na obnovu a domluvit schůzku",
+      "tender": "Dokončit nabídku a nechat ji zkontrolovat",
+      "lowActivity": "1:1 s vedoucím týmu, týdenní plán aktivit",
+      "paymentMatch": "Spárovat s {invoice} a zrušit upomínku",
+      "paymentTrace": "Dohledat plátce, případně vrátit platbu"
+    },
+    "tags": {
+      "over30": "30+ dní",
+      "stepPast": "krok v minulosti",
+      "noStep": "bez dalšího kroku",
+      "closePassed": "prošlé datum uzavření",
+      "followups6": "6+ zpožděných",
+      "within30": "do 30 dní"
+    }
+  },
+  "conversion": {
+    "window": "posledních {days} dní ({from} – {to})"
+  },
+  "leaks": {
+    "actions": {
+      "Kontakt": {
+        "Bez odezvy": "Zpřísnit kvalifikaci leadů a zavést sekvenci 3 kontaktů do 10 dní.",
+        "default": "Projít zdroj leadů s marketingem, upravit cílení a skript prvního hovoru."
+      },
+      "Kvalifikace": {
+        "Rozpočet zmrazen": "Ověřovat rozpočet a termín čerpání už při prvním hovoru (BANT).",
+        "default": "Doplnit kvalifikační checklist: rozhodovatel, rozpočet, termín."
+      },
+      "Nabídka": {
+        "Cena": "Nabízet dvě cenové varianty a referenční cenu podobného úřadu.",
+        "Vybrán konkurent": "Ke každé nabídce přidat srovnání s konkurencí a reference z regionu.",
+        "default": "Revize šablony nabídky s vedoucím týmu, follow-up do 3 dní po odeslání."
+      },
+      "Vyjednávání": {
+        "Cena": "Koučink vyjednávání; slevu schvaluje vedoucí týmu, raději rozsah než cenu.",
+        "Vybrán konkurent": "Společná účast vedoucího na 2 jednáních, posílit argumentaci referencemi.",
+        "default": "Pravidelný pipeline review dealů ve vyjednávání každý týden."
+      },
+      "Smlouva k podpisu": {
+        "Rozpočet zmrazen": "Podepisovat do konce čtvrtletí, hlídat rozpočtová opatření klienta.",
+        "default": "Zkrátit cestu podpisu: elektronický podpis a předem odsouhlasené VOP."
+      }
+    }
+  },
+  "aging": {
+    "current": "Ve splatnosti",
+    "1-30": "1–30 dní",
+    "31-60": "31–60 dní",
+    "60+": "60+ dní"
+  },
+  "chain": {
+    "won": "Vyhráno",
+    "signed": "Smlouva podepsána",
+    "invoiced": "Fakturováno",
+    "paid": "Uhrazeno"
+  },
+  "reconcile": {
+    "won": {
+      "source": "Pipedrive",
+      "system": "CRM",
+      "label": "Vyhrané dealy"
+    },
+    "invoices": {
+      "source": "iDoklad",
+      "system": "Fakturace",
+      "label": "Vystavené faktury"
+    },
+    "paid": {
+      "source": "iDoklad",
+      "system": "Fakturace",
+      "label": "Uhrazené faktury"
+    },
+    "payments": {
+      "source": "Banka",
+      "system": "Bankovní API",
+      "label": "Spárované platby"
+    }
+  },
+  "drill": {
+    "col": {
+      "deal": "Deal",
+      "owner": "Obchodník",
+      "value": "Hodnota",
+      "closedAt": "Uzavřeno",
+      "lostAt": "Ve fázi",
+      "reason": "Důvod",
+      "outcome": "Výsledek",
+      "stage": "Fáze",
+      "expected": "Očekávané uzavření",
+      "prob": "Pravd.",
+      "weighted": "Vážená hodnota",
+      "closeDate": "Uzavření",
+      "inStage": "Dní ve fázi",
+      "nextStep": "Další krok",
+      "invoice": "Faktura",
+      "institution": "Instituce",
+      "issuedAt": "Vystaveno",
+      "dueAt": "Splatnost",
+      "paidAt": "Uhrazeno",
+      "late": "Zpoždění",
+      "amount": "Částka",
+      "type": "Typ",
+      "due": "Termín",
+      "done": "Splněno",
+      "status": "Stav",
+      "doc": "Faktura / deal",
+      "date": "Datum",
+      "base": "Základ",
+      "rateCoef": "Sazba × koef.",
+      "commission": "Provize",
+      "daysToPay": "Dní k úhradě",
+      "signed": "Podepsáno",
+      "contract": "Smlouva",
+      "sent": "Odesláno",
+      "waiting": "Čeká",
+      "end": "Konec",
+      "renewal": "Obnova",
+      "annualValue": "Roční hodnota",
+      "atRisk": "V ohrožení",
+      "tender": "Zakázka",
+      "authority": "Zadavatel",
+      "submission": "Podání",
+      "receivedAt": "Přijato",
+      "payer": "Plátce",
+      "vs": "VS",
+      "candidate": "Kandidát",
+      "created": "Založeno",
+      "cycle": "Cyklus"
+    },
+    "count": {
+      "deals": {
+        "one": "{count} deal",
+        "few": "{count} dealy",
+        "many": "{count} dealu",
+        "other": "{count} dealů"
+      },
+      "openDeals": {
+        "one": "{count} otevřený deal",
+        "few": "{count} otevřené dealy",
+        "many": "{count} otevřeného dealu",
+        "other": "{count} otevřených dealů"
+      },
+      "closed": {
+        "one": "{count} uzavřený ({won} vyhráno)",
+        "few": "{count} uzavřené ({won} vyhráno)",
+        "many": "{count} uzavřeného ({won} vyhráno)",
+        "other": "{count} uzavřených ({won} vyhráno)"
+      },
+      "weighted": {
+        "one": "{count} deal ({won} vyhraných, {open} otevřených)",
+        "few": "{count} dealy ({won} vyhraných, {open} otevřených)",
+        "many": "{count} dealu ({won} vyhraných, {open} otevřených)",
+        "other": "{count} dealů ({won} vyhraných, {open} otevřených)"
+      },
+      "dealsWorth": {
+        "one": "{count} deal za {value}",
+        "few": "{count} dealy za {value}",
+        "many": "{count} dealu za {value}",
+        "other": "{count} dealů za {value}"
+      },
+      "activities": {
+        "one": "{count} aktivita",
+        "few": "{count} aktivity",
+        "many": "{count} aktivity",
+        "other": "{count} aktivit"
+      },
+      "invoices": {
+        "one": "{count} faktura",
+        "few": "{count} faktury",
+        "many": "{count} faktury",
+        "other": "{count} faktur"
+      },
+      "paidInvoices": {
+        "one": "{count} uhrazená faktura",
+        "few": "{count} uhrazené faktury",
+        "many": "{count} uhrazené faktury",
+        "other": "{count} uhrazených faktur"
+      },
+      "items": {
+        "one": "{count} položka",
+        "few": "{count} položky",
+        "many": "{count} položky",
+        "other": "{count} položek"
+      },
+      "contracts": {
+        "one": "{count} smlouva",
+        "few": "{count} smlouvy",
+        "many": "{count} smlouvy",
+        "other": "{count} smluv"
+      },
+      "renewed": {
+        "one": "{count} smlouva ({renewed} obnoveno)",
+        "few": "{count} smlouvy ({renewed} obnoveno)",
+        "many": "{count} smlouvy ({renewed} obnoveno)",
+        "other": "{count} smluv ({renewed} obnoveno)"
+      },
+      "tenders": {
+        "one": "{count} zakázka",
+        "few": "{count} zakázky",
+        "many": "{count} zakázky",
+        "other": "{count} zakázek"
+      },
+      "payments": {
+        "one": "{count} platba",
+        "few": "{count} platby",
+        "many": "{count} platby",
+        "other": "{count} plateb"
+      },
+      "cohort": {
+        "one": "{count} deal opustil fázi ({advanced} postoupilo)",
+        "few": "{count} dealy opustily fázi ({advanced} postoupilo)",
+        "many": "{count} dealu opustilo fázi ({advanced} postoupilo)",
+        "other": "{count} dealů opustilo fázi ({advanced} postoupilo)"
+      },
+      "wonDeals": {
+        "one": "{count} vyhraný deal",
+        "few": "{count} vyhrané dealy",
+        "many": "{count} vyhraného dealu",
+        "other": "{count} vyhraných dealů"
+      },
+      "candidates": {
+        "one": "{count} kandidát podle částky",
+        "few": "{count} kandidáti podle částky",
+        "many": "{count} kandidáta podle částky",
+        "other": "{count} kandidátů podle částky"
+      }
+    },
+    "text": {
+      "coldCall": "Cold call (nový kontakt)",
+      "lineKind": {
+        "paid": "K výplatě",
+        "unpaid": "Čeká na úhradu",
+        "uninvoiced": "Čeká na fakturaci"
+      },
+      "amountMatch": "{invoice} (shoda částky)",
+      "lostTitle": "Prohráno · {reason}",
+      "lostAll": "Prohrané dealy",
+      "lostTotal": "Ztracená hodnota",
+      "pipelineStage": "Pipeline · {stage}",
+      "openToday": "otevřené dealy k dnešku",
+      "closingSoon": "Uzavírání v příštích {days} dnech",
+      "asOfToday": "stav k dnešku",
+      "count": "Počet",
+      "lastWeeks": "poslední {weeks} týdny",
+      "activitiesNote": "Hovory {calls} · e-maily {emails} · schůzky {meetings} · follow-upy {followups}",
+      "receivablesOf": "Pohledávky · {label}",
+      "asOf": "stav k {date}",
+      "total": "Celkem",
+      "commissionRep": "Provize · {name}",
+      "commissionAll": "Provize celkem (k výplatě + čeká)",
+      "commissionNote": "Provize vzniká úhradou faktury. Koeficient KPI podle plnění plánu v měsíci úhrady.",
+      "chain": "Řetězec · {step}",
+      "chainSubtitle": "dealy vyhrané v období {period}",
+      "unsignedTitle": "Smlouvy čekající na podpis",
+      "unsignedSubtitle": "déle než {days} dní",
+      "renewalsTitle": "Obnovy v příštích {days} dnech",
+      "atRisk": "Kč v ohrožení",
+      "renewalRateSubtitle": "smlouvy s koncem v posledních {months} měsících",
+      "tendersStatus": "Veřejné zakázky · {status}",
+      "tendersActive": "Aktivní veřejné zakázky",
+      "cohortTitle": "{stage} → další fáze",
+      "conversion": "Konverze",
+      "advanced": "Postoupil",
+      "median": "Medián",
+      "unknown": "Neznámý přehled"
+    },
+    "record": {
+      "invoiceNotFound": "Faktura nenalezena",
+      "contractNotFound": "Smlouva nenalezena",
+      "tenderNotFound": "Zakázka nenalezena",
+      "paymentNotFound": "Platba nenalezena",
+      "notFound": "Záznam nenalezen",
+      "noAccess": "Záznam je mimo váš přístup",
+      "tender": "Veřejná zakázka",
+      "submissionDeadline": "Termín podání",
+      "tenderStatus": "Stav zakázky",
+      "paymentTitle": "Platba {amount}",
+      "received": "přijata {date}",
+      "payer": "Plátce",
+      "vs": "Variabilní symbol",
+      "status": "Stav",
+      "matchedManual": "Spárováno ručně",
+      "matchedAuto": "Spárováno automaticky",
+      "unmatched": "Nespárováno",
+      "likelyInvoice": "Nejpravděpodobnější faktura",
+      "noCandidate": "žádná se stejnou částkou",
+      "paymentNote": "VS se liší o přehozené číslice; částka sedí přesně. Doporučení: spárovat ručně a zrušit upomínku.",
+      "contractSent": "Smlouva {id} odeslána k podpisu",
+      "contractSigned": "Smlouva {id} podepsána",
+      "invoiceIssued": "Faktura {number} vystavena ({amount})",
+      "invoicePaid": "Faktura {number} uhrazena",
+      "institution": "Instituce",
+      "product": "Produkt",
+      "rep": "Obchodník",
+      "source": "Zdroj",
+      "renewalSuffix": " · obnova smlouvy",
+      "stage": "Fáze",
+      "daysInStage": "{days} ve fázi",
+      "created": "Založeno",
+      "expectedClose": "Očekávané uzavření",
+      "nextStep": "Další krok",
+      "notScheduled": "nenaplánován",
+      "probability": "Pravděpodobnost",
+      "closed": "Uzavřeno",
+      "closedValue": "{date} · cyklus {cycle}",
+      "tenderValue": "{id} · podání {date} · {status}",
+      "unpaid": "Neuhrazeno",
+      "dealValue": "Hodnota dealu",
+      "amount": "Částka"
+    },
+    "ui": {
+      "back": "Zpět",
+      "error": "Data se nepodařilo načíst. Zkuste to prosím znovu.",
+      "sum": "Součet",
+      "truncated": "Zobrazeno {shown} z {total} záznamů. Součet a počet zahrnují všechny.",
+      "empty": "Žádné záznamy pro zvolené období."
+    }
+  },
+  "views": {
+    "ofPlan": "{pct} z plánu {plan}",
+    "gapToPlan": "Do plánu chybí {value}",
+    "abovePlan": "Nad plánem o {value}",
+    "lastMonths": "posledních {months} měsíců",
+    "monthEnd": "stav vždy ke konci měsíce",
+    "pendingMore": "čeká dalších {value}",
+    "paymentTerm": "splatnost faktur {days}",
+    "weighted": "vážená {value}",
+    "planMet": "plán už je splněný",
+    "coverageNote": "pipeline {pipeline} na zbývajících {rest}",
+    "weightedPipeline": "vážená pipeline {value}",
+    "activitiesOf": "{done} z {target} aktivit"
+  },
+  "meta": {
+    "title": "GBH Defence · Obchodní dashboard",
+    "description": "Ukázkový dashboard obchodního oddělení GBH Defence: plán, pipeline, disciplína týmu, peníze a provize. Data jsou simulovaná."
+  },
+  "nav": {
+    "label": "Hlavní navigace",
+    "menu": "Navigace",
+    "openMenu": "Otevřít menu",
+    "groups": {
+      "sales": "Obchod",
+      "money": "Peníze",
+      "reporting": "Reporting"
+    },
+    "items": {
+      "overview": "Přehled",
+      "exceptions": "Vyžaduje pozornost",
+      "pipeline": "Pipeline a prognóza",
+      "team": "Disciplína týmu",
+      "conversion": "Konverze a úniky",
+      "contracts": "Smlouvy a zakázky",
+      "money": "Peníze",
+      "commissions": "Provize",
+      "report": "Týdenní report",
+      "dictionary": "Slovník metrik"
+    }
+  },
+  "shell": {
+    "department": "Obchodní oddělení",
+    "demo": "Demo",
+    "demoLong": "Demo · simulovaná data",
+    "sources": "Pipedrive · iDoklad · banka",
+    "updated": "Aktualizováno {date} {time} · Pipedrive · iDoklad · banka",
+    "themeLight": "Přepnout na světlý režim",
+    "themeDark": "Přepnout na tmavý režim",
+    "viewAs": "Zobrazit jako",
+    "viewAsNote": "{scope}: data se filtrují před výpočtem metrik.",
+    "footer": "Ukázková verze dashboardu postaveného pro obchodní oddělení GBH Defence. Všechna data jsou generovaná, instituce jsou smyšlené. Autor: Vadim Lepsky ·",
+    "period": "Období",
+    "custom": "Vlastní…",
+    "customPeriod": "Vlastní období",
+    "from": "Od",
+    "to": "Do",
+    "apply": "Použít",
+    "compare": "Porovnání",
+    "loading": "Načítám",
+    "loadingDots": "Načítám…",
+    "errorTitle": "Něco se pokazilo",
+    "errorText": "Přehled se nepodařilo spočítat. Zkuste to prosím znovu.",
+    "retry": "Načíst znovu",
+    "notFoundTitle": "Stránka neexistuje",
+    "notFoundText": "Odkaz je možná zastaralý. Všechny přehledy najdete v menu vlevo.",
+    "backHome": "Zpět na přehled"
+  },
+  "ui": {
+    "showRecords": "{label}: zobrazit záznamy",
+    "definition": "Definice",
+    "deadline": {
+      "today": "dnes",
+      "tomorrow": "zítra",
+      "by": "do {date}"
+    },
+    "accounting": "účtárna",
+    "dealList": {
+      "deal": "Deal",
+      "stage": "Fáze",
+      "value": "Hodnota",
+      "close": "Uzavření",
+      "inStage": "Ve fázi",
+      "nextStep": "Další krok",
+      "usually": "obvykle {days}",
+      "noStep": "bez kroku",
+      "more": "+ dalších {count} v detailu"
+    },
+    "forecast": {
+      "won": "Vyhráno",
+      "weighted": "Vážená pipeline",
+      "plan": "Plán",
+      "title": "Prognóza · {label}",
+      "tooltip": "Vyhráno {won} · vážená pipeline {weighted} · plán {plan}"
+    },
+    "funnel": {
+      "stage": "Fáze",
+      "open": "Otevřené dealy",
+      "rate": "Konverze dál",
+      "avgDays": "Ø dní ve fázi",
+      "lost": "Ztraceno",
+      "rateFor": "Konverze za {window}"
+    },
+    "map": {
+      "tooltip": "{name}: prognóza {total}, {open}",
+      "less": "méně",
+      "more": "více"
+    },
+    "team": {
+      "rep": "Obchodník",
+      "activities": "Aktivity",
+      "overdueFu": "Zpožd. FU",
+      "noStep": "Bez kroku",
+      "stuck": "Zaseknuté",
+      "lastActivity": "Posl. akt.",
+      "trend": "Trend {months} měs.",
+      "today": "dnes"
+    },
+    "exTable": {
+      "all": "Vše · {count}",
+      "allOwners": "Všichni vlastníci",
+      "noOwner": "Bez vlastníka (účtárna)",
+      "owner": "Vlastník",
+      "emptyTitle": "Nic k řešení",
+      "emptyText": "Pro zvolený filtr nejsou žádné výjimky.",
+      "type": "Typ",
+      "object": "Objekt",
+      "atRisk": "Kč v ohrožení",
+      "nextStep": "Další krok",
+      "deadline": "Termín"
+    },
+    "repDetail": {
+      "monthly": "Měsíční plnění",
+      "monthlyDesc": "Prodáno vs. osobní plán, {months} měsíců. Klikněte na sloupec pro dealy.",
+      "weekly": "Aktivity po týdnech",
+      "weeklyDesc": "Hovory, e-maily, schůzky a follow-upy za posledních {weeks} týdnů",
+      "pipeline": "Pipeline obchodníka",
+      "pipelineDesc": "Otevřené dealy dnes, konverze za {window}",
+      "exceptions": "Výjimky obchodníka",
+      "exceptionsDesc": "{count} položek k řešení",
+      "noExceptions": "Žádné výjimky",
+      "noExceptionsText": "Obchodník má pipeline v pořádku."
+    },
+    "chart": {
+      "dsoLegend": "DSO (dní do úhrady)",
+      "dsoTitle": "DSO · {month}",
+      "term": "Splatnost",
+      "dsoFooter": "Klikněte pro uhrazené faktury",
+      "won": "Prodáno",
+      "wonTitle": "Prodáno · {month}",
+      "weightedToMonthEnd": "Vážená pipeline do konce měsíce",
+      "weighted": "Vážená pipeline",
+      "plan": "Plán",
+      "lastYear": "Loni",
+      "salesFooter": "Plnění {pct} · klikněte pro dealy",
+      "weeklyDone": "Splněné aktivity za týden",
+      "weeklyTarget": "Týdenní cíl",
+      "weekOf": "Týden od {date}",
+      "activities": "Aktivity",
+      "target": "Cíl",
+      "termLegend": "Splatnost faktur"
+    }
+  },
+  "pages": {
+    "overview": {
+      "kpiWon": "Prodáno vs. plán",
+      "kpiForecast": "Prognóza na konec období",
+      "salesTitle": "Prodáno vs. plán",
+      "salesDesc": "Posledních {months} měsíců. Kliknutím na sloupec zobrazíte dealy daného měsíce.",
+      "forecastTitle": "Prognóza · {period}",
+      "forecastClosed": "Období je uzavřené, prognóza = skutečnost.",
+      "forecastOpen": "Vyhrané dealy + otevřené dealy vážené pravděpodobností fáze.",
+      "ofPlan": "{pct} plánu",
+      "alreadyWon": "Už vyhráno",
+      "weighted": "Vážená pipeline",
+      "gap": "Chybí do plánu",
+      "above": "Nad plánem",
+      "planMet": "plán splněn",
+      "inPipeline": "({value} v pipeline)",
+      "coverageHigh": "Krytí nad 3× – plán je realistický, pokud se uzavřou dealy ve vyjednávání.",
+      "coverageMid": "Krytí mezi 1,5× a 3× – bez dalších dealů bude plán těsný.",
+      "coverageLow": "Krytí pod 1,5× – na splnění plánu nestačí ani celá pipeline.",
+      "attention": "Vyžaduje pozornost",
+      "attentionDesc": "{count} za {value} · seřazeno podle Kč × naléhavosti",
+      "fullList": "Celý seznam",
+      "chainTitle": "Od prodeje k penězům",
+      "chainDesc": "Toky v období {period}",
+      "ofPrev": "{pct} předchozího kroku",
+      "lagNote": "Fakturace i úhrady se zpožďují za prodejem: školení se fakturuje po podpisu a dodání a státní instituce platí typicky {days} po splatnosti (medián za rok)."
+    },
+    "pipeline": {
+      "description": "Splníme plán?",
+      "closingIn": "Uzavírání do {days}",
+      "closingNote": "{count} s očekávaným uzavřením",
+      "worth": "za {value}",
+      "funnel": "Trychtýř podle fází",
+      "funnelDesc": "Otevřené dealy dnes. Konverze a doba ve fázi za {window}. Červeně = výrazně pod průměrem.",
+      "byKraj": "Prognóza podle krajů",
+      "byKrajDesc": "Vyhráno + vážená pipeline v období",
+      "byRep": "Vážená prognóza vs. plán · obchodníci",
+      "byRepDesc": "{period} · seřazeno podle plnění",
+      "byTeam": "Prognóza podle týmů",
+      "soon": "Uzavírání v příštích {days} dnech",
+      "soonDesc": "Co musí dopadnout, aby prognóza platila",
+      "soonEmpty": "Žádné dealy s uzavřením do {days}",
+      "stuck": "Zaseknuté dealy",
+      "stuckDesc": "Ve fázi déle než {factor}× obvyklá doba, seřazeno podle hodnoty",
+      "stuckEmpty": "Žádné zaseknuté dealy"
+    },
+    "team": {
+      "description": "Kdo pracuje a kdo zaostává",
+      "pace": "Plnění plánu (tempo)",
+      "ofTarget": "{done} z {target}",
+      "asOfToday": "stav k dnešku",
+      "openDeals": "otevřených dealů",
+      "longer": "déle než {factor}× obvyklá doba",
+      "reps": "Obchodníci",
+      "repsDesc": "{period} · podbarvené buňky vyžadují pozornost · kliknutím na řádek otevřete detail obchodníka, na číslo jeho záznamy",
+      "note": "Plnění = prodáno / plán za celé období; svislá čárka v pruhu ukazuje, kde by obchodník měl být k dnešku. Trend = plnění za poslední {months} měsíce a průběžně tento měsíc.",
+      "teams": "{a} vs. {b}",
+      "ofPlan": "{pct} plánu",
+      "sold": "Prodáno",
+      "plan": "Plán",
+      "forecast": "Vážená prognóza",
+      "pipeline": "Pipeline",
+      "winRate": "Win rate",
+      "activities": "Aktivity vůči cíli",
+      "overdueFu": "Zpožděné follow-upy",
+      "noStepStuck": "Bez kroku / zaseknuté"
+    },
+    "rep": {
+      "fallbackTitle": "Obchodník",
+      "back": "Disciplína týmu",
+      "noAccess": "Obchodník je mimo váš přístup",
+      "noAccessText": "V roli, kterou máte zvolenou, vidíte jen data svého týmu nebo svá vlastní.",
+      "description": "{role} · tým {team} · od {date}",
+      "kpiWon": "Prodáno vs. plán",
+      "kpiForecast": "Prognóza na konec období",
+      "kpiActivities": "Aktivity vůči cíli"
+    },
+    "exceptions": {
+      "description": "Denní seznam výjimek, ne grafy",
+      "open": "Otevřené výjimky",
+      "asOfToday": "stav k dnešku",
+      "atRisk": "Kč v ohrožení",
+      "sumAll": "součet za všechny položky",
+      "today": "Řešit dnes",
+      "topOwner": "Nejvíc v ohrožení",
+      "list": "Seznam k řešení",
+      "listDesc": "Seřazeno podle Kč v ohrožení × naléhavosti termínu. Kliknutím na objekt otevřete detail.",
+      "rules": "Pravidla",
+      "rulesDesc": "Kdy se položka objeví v seznamu"
+    },
+    "conversion": {
+      "description": "Kde nám utíkají peníze",
+      "widened": "Konverze potřebují dost uzavřených fází, proto tato stránka počítá za {window}.",
+      "matrix": "Konverze mezi fázemi podle zdroje leadu",
+      "matrixDesc": "Barva = rozdíl proti průměru dané fáze (zeleně lépe, červeně hůř). V závorce počet dealů, které fázi opustily.",
+      "source": "Zdroj",
+      "winRate": "Win rate",
+      "average": "Průměr",
+      "stageShort": {
+        "Kontakt": "Kontakt → Kval.",
+        "Kvalifikace": "Kval. → Nabídka",
+        "Nabídka": "Nabídka → Vyjedn.",
+        "Vyjednávání": "Vyjedn. → Smlouva",
+        "Smlouva k podpisu": "Smlouva → Vyhráno"
+      },
+      "leaks": "Top 5 úniků v Kč",
+      "leaksDesc": "Očekávaná ztracená tržba proti průměrné konverzi fáze (dealy, které měly postoupit, × pravděpodobnost další fáze) · doporučený krok podle pravidel",
+      "noLeaks": "Žádné výrazné úniky",
+      "noLeaksText": "V okně je málo uzavřených fází nebo jsou všechny kolem průměru.",
+      "leakTitle": "Únik · {stage} × {label}",
+      "dimSource": "zdroj",
+      "dimOwner": "obchodník",
+      "leakStats": "Konverze {rate} vs. průměr {avg} · {deals}",
+      "leakReason": " · nejčastěji „{reason}“",
+      "recommendation": "Doporučení:",
+      "owner": "Vlastník: {name}",
+      "lostByReason": "Prohrané dealy podle důvodu",
+      "lostValue": "Ztracená hodnota {value}",
+      "cycleSource": "Délka cyklu podle zdroje",
+      "cycleType": "Délka cyklu podle typu instituce",
+      "cycleDesc": "Medián dní od založení po výhru",
+      "wins": {
+        "one": "{count} výhra",
+        "few": "{count} výhry",
+        "many": "{count} výhry",
+        "other": "{count} výher"
+      },
+      "medianDays": "Medián dní",
+      "noData": "Bez dat v okně"
+    },
+    "money": {
+      "description": "Prodáno → fakturováno → uhrazeno",
+      "chain": "Řetězec od výhry k penězům",
+      "chainDesc": "Dealy vyhrané v období {period} a kde jsou dnes",
+      "ofValue": "{pct} hodnoty",
+      "waitingSignature": {
+        "one": "{count} smlouva čeká na podpis déle než {days}",
+        "few": "{count} smlouvy čekají na podpis déle než {days}",
+        "many": "{count} smlouvy čeká na podpis déle než {days}",
+        "other": "{count} smluv čeká na podpis déle než {days}"
+      },
+      "signedNotInvoiced": {
+        "one": "{count} podepsaná smlouva bez faktury déle než {days}",
+        "few": "{count} podepsané smlouvy bez faktury déle než {days}",
+        "many": "{count} podepsané smlouvy bez faktury déle než {days}",
+        "other": "{count} podepsaných smluv bez faktury déle než {days}"
+      },
+      "overdueInChain": {
+        "one": "{count} faktura z těchto dealů po splatnosti",
+        "few": "{count} faktury z těchto dealů po splatnosti",
+        "many": "{count} faktury z těchto dealů po splatnosti",
+        "other": "{count} faktur z těchto dealů po splatnosti"
+      },
+      "nothingStuck": "Nic se nezaseklo",
+      "aging": "Stáří pohledávek",
+      "agingDesc": "Neuhrazené faktury k {date} podle dní po splatnosti",
+      "institution": "Instituce",
+      "total": "Celkem",
+      "moreInstitutions": "+ {count} dalších institucí ·",
+      "allReceivables": "všechny pohledávky",
+      "dso": "DSO po měsících",
+      "dsoDesc": "Průměrná doba od vystavení po úhradu faktury",
+      "products": "Tržby a hrubá marže podle produktu",
+      "productsDesc": "Vyhrané dealy v období {period}",
+      "noWon": "V období nejsou vyhrané dealy",
+      "soldTitle": "Prodáno · {name}",
+      "margin": "marže {pct}",
+      "revenue": "Tržba",
+      "marginValue": "Hrubá marže v Kč",
+      "unmatched": "Nespárované platby",
+      "unmatchedDesc": "Platby bez faktury a nejpravděpodobnější kandidát podle částky · ručně spárováno za {months} měsíců: {count}",
+      "allMatched": "Všechny platby jsou spárované",
+      "amountMatch": "VS {vs} · shoda částky",
+      "alternatives": " (+{count} další)",
+      "noCandidate": "bez kandidáta",
+      "unmatchedNote": "Faktura kandidáta se v systému tváří jako nezaplacená, a proto může strašit v pohledávkách po splatnosti. Po ručním spárování zmizí z upomínek."
+    },
+    "commissions": {
+      "description": "Provize vzniká úhradou faktury",
+      "fromPaid": "z uhrazených tržeb {value}",
+      "paidLater": "vyplatí se po úhradě faktur",
+      "base": "základ pro provize v období",
+      "kpiPaid": "Uhrazené tržby",
+      "byRep": "Provize podle obchodníků",
+      "byRepDesc": "{period} · kliknutím na jméno zobrazíte, z jakých faktur provize je a co ještě čeká na úhradu",
+      "rep": "Obchodník",
+      "paidRevenue": "Uhrazená tržba",
+      "rate": "Sazba",
+      "attainmentRunning": "Plnění (průběžně)",
+      "attainment": "Plnění plánu",
+      "avgCoef": "Ø koeficient",
+      "coef": "Koeficient",
+      "payable": "K výplatě",
+      "pending": "Čeká",
+      "total": "Celkem",
+      "rule": "Pravidlo",
+      "ruleDesc": "Stejné pro celý tým",
+      "ruleText": "Provize vzniká úhradou faktury.",
+      "baseRate": "Základní sazba z uhrazené tržby",
+      "coefTitle": "Koeficient KPI podle plnění plánu v měsíci",
+      "explain": "K výplatě = uhrazená tržba × sazba × koeficient měsíce úhrady. Čeká = vyhrané, ale dosud nezaplacené částky (nevyfakturované i neuhrazené) × sazba × aktuální koeficient. Běžící měsíc se hodnotí poměrně k dnešku."
+    },
+    "contracts": {
+      "description": "Obnovy ročních smluv a veřejné zakázky · stav k dnešku",
+      "renewalsWithin": "Obnovy do {days}",
+      "atRiskOf": "v ohrožení · {contracts}",
+      "renewedOf": "{renewed} z {ended} smluv za {months} měsíců",
+      "activeTenders": "Aktivní zakázky",
+      "worth": "za {value}",
+      "tenderStats": "{won} vyhraných, {lost} prohraných za {months} měsíců",
+      "renewals": "Obnovy v příštích {days} dnech",
+      "renewalsDesc": "{label} za {months} měsíců: {rate} · Kč v ohrožení = roční hodnota, kterou zatím nemáme jistou",
+      "noRenewals": "Žádné smlouvy nekončí",
+      "institution": "Instituce",
+      "today": "dnes",
+      "renewal": "Obnova",
+      "atRisk": "V ohrožení",
+      "annual": "{owner} · roční {value}",
+      "daysShort": "{days} d",
+      "tenders": "Veřejné zakázky",
+      "tendersDesc": "Aktivní zakázky podle termínu podání",
+      "noTenders": "Žádné aktivní zakázky",
+      "tender": "Zakázka",
+      "authority": "Zadavatel",
+      "deadline": "Termín podání",
+      "status": "Stav",
+      "owner": "Vlastník",
+      "value": "Hodnota",
+      "inDays": "za {days}",
+      "daysAgo": {
+        "one": "před {count} dnem",
+        "few": "před {count} dny",
+        "many": "před {count} dne",
+        "other": "před {count} dny"
+      }
+    },
+    "report": {
+      "description": "Automatický e-mail pro vedení",
+      "day": "každé pondělí",
+      "scheduled": "Plánováno: {day} {time} → {to}",
+      "scheduleNote": "Report se skládá ze stejných metrik jako dashboard, za uplynulý týden.",
+      "sendTest": "Odeslat testovací e-mail (v demu vypnuto)",
+      "from": "Od:",
+      "to": "Komu:",
+      "subject": "Týdenní report obchodu · {range}",
+      "brand": "GBH Defence · Obchod",
+      "week": "Týden {range}",
+      "intro": "Dobrý den, posíláme přehled minulého týdne. Čísla jsou ze stejného zdroje jako dashboard (Pipedrive, iDoklad, banka).",
+      "wonWeek": "Prodáno za týden",
+      "vsPrevWeek": "{change} vs. předchozí týden",
+      "collected": "Uhrazeno",
+      "invoiced": "Fakturováno",
+      "overdueTotal": "po splatnosti celkem {value}",
+      "activities": "Aktivity týmu",
+      "activitiesSub": "{pct} cíle · {deals}",
+      "newDeals": {
+        "one": "{count} nový deal",
+        "few": "{count} nové dealy",
+        "many": "{count} nového dealu",
+        "other": "{count} nových dealů"
+      },
+      "monthPlan": "Plnění plánu za měsíc",
+      "monthNote": "Prodáno {won} z plánu {plan} · vážená prognóza na konec měsíce {forecast}",
+      "top5": "Top 5 věcí k řešení",
+      "best": "Nejlepší tempo v měsíci",
+      "worst": "Potřebuje podporu",
+      "ofProrated": "{pct} poměrného plánu",
+      "footer": "Detail všech čísel najdete v dashboardu, kde se dá z každého čísla prokliknout na konkrétní dealy a faktury. Tento e-mail je ukázka, data jsou simulovaná."
+    },
+    "dictionary": {
+      "description": "Jedna definice pro každé číslo v dashboardu",
+      "check": "Kontrola dat",
+      "checkDesc": "Součty ze zdrojových systémů vedle součtů, které počítá dashboard, za celou historii od {date}",
+      "allOk": "Vše sedí",
+      "mismatch": "Nesoulad",
+      "source": "Zdroj",
+      "records": "Záznamy",
+      "count": "Počet",
+      "sourceSum": "Součet ve zdroji",
+      "dashboardSum": "Součet v dashboardu",
+      "status": "Stav",
+      "ok": "sedí",
+      "notOk": "nesedí",
+      "unmatched": "Nespárované platby",
+      "unmatchedSub": "za {value} z celkem {total}",
+      "openDeals": "Otevřené dealy",
+      "openDealsSub": "nevstupují do prodeje, jen do pipeline",
+      "lostDeals": "Prohrané dealy",
+      "lostDealsSub": "základ pro win rate a analýzu úniků",
+      "note": "Spárované platby z banky se musí rovnat uhrazeným fakturám. Platba s chybným variabilním symbolem zůstane nespárovaná, dokud ji účtárna nepřiřadí ručně, a proto je vedená zvlášť.",
+      "definitions": "Definice",
+      "definitionsDesc": "Stejné definice jsou v nápovědě u každého čísla (ikonka ?)",
+      "metric": "Metrika",
+      "definition": "Definice",
+      "formula": "Vzorec",
+      "unit": "Jednotka",
+      "good": "Dobře je",
+      "up": "↑ víc",
+      "down": "↓ míň",
+      "units": {
+        "czk": "Kč",
+        "czk_compact": "Kč",
+        "percent": "%",
+        "days": "dny",
+        "int": "počet",
+        "ratio": "násobek",
+        "date": "datum",
+        "text": "text"
+      }
+    }
+  }
+}

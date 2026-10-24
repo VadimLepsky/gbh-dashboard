@@ -1,14 +1,15 @@
 'use client'
 
-import { formatValue } from '@/lib/format'
 import type { Kpi } from '@/lib/metrics/kpi'
 import { cn } from '@/lib/utils'
 import { DrillButton } from '@/components/drill/drill-trigger'
 import { Sparkline } from '@/components/charts/sparkline'
 import { InfoTip } from './info-tip'
 import { Delta, ProgressBar } from './primitives'
+import { useI18n } from '@/components/i18n-provider'
 
 export function KpiCard({ kpi, className, title }: { kpi: Kpi; className?: string; title?: string }) {
+  const { t, f } = useI18n()
   return (
     <DrillButton
       req={kpi.drill}
@@ -16,14 +17,14 @@ export function KpiCard({ kpi, className, title }: { kpi: Kpi; className?: strin
         'group flex min-w-0 flex-col rounded-xl bg-card p-4 ring-1 ring-foreground/[0.07] transition-shadow hover:ring-foreground/15 hover:shadow-sm',
         className,
       )}
-      aria-label={`${title ?? kpi.label}: zobrazit záznamy`}
+      aria-label={t('ui.showRecords', { label: title ?? kpi.label })}
     >
       <span className="flex items-center gap-1 text-[13px] text-muted-foreground">
         {title ?? kpi.label}
         <InfoTip text={kpi.definition} />
       </span>
       <span className="tabular mt-1 truncate text-[26px] leading-tight font-semibold tracking-tight">
-        {formatValue(kpi.value, kpi.format)}
+        {f.formatValue(kpi.value, kpi.format)}
       </span>
       <Delta
         className="mt-1"
@@ -31,7 +32,7 @@ export function KpiCard({ kpi, className, title }: { kpi: Kpi; className?: strin
         kind={kpi.deltaKind}
         good={kpi.good}
         label={kpi.compareLabel}
-        unit={kpi.format === 'days' ? 'dní' : undefined}
+        unit={kpi.format === 'days' ? 'days' : undefined}
       />
       <span className="mt-auto block pt-3">
         {kpi.progress ? (

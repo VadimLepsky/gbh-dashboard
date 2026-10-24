@@ -5,7 +5,7 @@ export type DrillFilterValue = string | number | null | undefined
 export interface DrillRequest {
   metric: string
   filters?: Record<string, DrillFilterValue>
-  /** Optional heading override (e.g. "Prodáno · září 2026"). */
+  /** Optional heading override (e.g. "Sold · September 2026"). */
   title?: string
 }
 
@@ -38,7 +38,8 @@ export interface DrillResult {
   definition?: string
   total: { label: string; value: number | null; format: CellFormat }
   count: number
-  countLabel: string
+  /** Count with its noun, e.g. "12 faktur" / "12 invoices"; empty hides it. */
+  countText: string
   columns: DrillColumn[]
   rows: DrillRow[]
   /** Rows were capped for transfer; total and count still cover all records. */

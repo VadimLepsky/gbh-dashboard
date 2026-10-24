@@ -3,9 +3,8 @@ import { collected, invoiced, unmatchedPayments } from './money'
 import { revenueWon, sum } from './sales'
 
 export interface ReconcileRow {
-  source: string
-  system: string
-  label: string
+  /** Texts: `reconcile.<id>.source|system|label` in the dictionaries. */
+  id: 'won' | 'invoices' | 'paid' | 'payments'
   sourceCount: number
   sourceValue: number
   dashboardValue: number
@@ -25,36 +24,28 @@ export function reconcile(ds: Dataset) {
 
   const rows: ReconcileRow[] = [
     {
-      source: 'Pipedrive',
-      system: 'CRM',
-      label: 'Vyhrané dealy',
+      id: 'won',
       sourceCount: won.length,
       sourceValue: sum(won, (d) => d.value),
       dashboardValue: revenueWon(ds, all),
       ok: false,
     },
     {
-      source: 'iDoklad',
-      system: 'Fakturace',
-      label: 'Vystavené faktury',
+      id: 'invoices',
       sourceCount: ds.invoices.length,
       sourceValue: sum(ds.invoices, (i) => i.amount),
       dashboardValue: invoiced(ds, all),
       ok: false,
     },
     {
-      source: 'iDoklad',
-      system: 'Fakturace',
-      label: 'Uhrazené faktury',
+      id: 'paid',
       sourceCount: paid.length,
       sourceValue: sum(paid, (i) => i.amount),
       dashboardValue: collected(ds, all),
       ok: false,
     },
     {
-      source: 'Banka',
-      system: 'Bankovní API',
-      label: 'Spárované platby',
+      id: 'payments',
       sourceCount: matched.length,
       sourceValue: sum(matched, (p) => p.amount),
       dashboardValue: collected(ds, all),

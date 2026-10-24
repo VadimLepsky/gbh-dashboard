@@ -109,7 +109,7 @@ describe('totals reconcile', () => {
 
   it('source systems reconcile with dashboard totals', () => {
     const r = reconcile(ds)
-    for (const row of r.rows) expect(row.ok, row.label).toBe(true)
+    for (const row of r.rows) expect(row.ok, row.id).toBe(true)
     expect(r.unmatchedCount).toBeGreaterThanOrEqual(2)
   })
 })

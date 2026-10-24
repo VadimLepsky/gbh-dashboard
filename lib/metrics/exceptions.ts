@@ -1,23 +1,15 @@
 import { addDays, diffDays, startOfMonth } from '../data/dates'
 import { paymentCandidates } from '../data/match'
 import type { Dataset, Deal, ISODate, OpenStage } from '../data/types'
-import { formatCount, formatDate, formatPercent } from '../format'
+import { getI18n, type I18n } from '../i18n'
 import { dealName, institutionName, lookup } from './lookup'
 import { overdueInvoices, daysOverdue, unmatchedPayments } from './money'
 import { upcomingRenewals } from './contracts'
 import { daysInStage, hasNoNextStep, isStuck, medianForDeal, openDeals, revenueWon, weightedValue } from './sales'
 import { overdueFollowups, rollingActivityRatio } from './team'
 
-export { EXCEPTION_LABEL, RULES, RULE_TEXT, type ExceptionItem, type ExceptionType } from './exceptions-shared'
+export { exceptionLabel, RULES, ruleTexts, type ExceptionItem, type ExceptionType } from './exceptions-shared'
 import { RULES, type ExceptionItem } from './exceptions-shared'
-
-const STUCK_ACTION: Record<OpenStage, string> = {
-  Kontakt: 'Ověřit zájem, nebo deal uzavřít jako prohraný',
-  Kvalifikace: 'Domluvit schůzku s rozhodovatelem',
-  Nabídka: 'Zavolat k nabídce, zjistit námitky',
-  Vyjednávání: 'Eskalovat: schůzka vedoucího s klientem',
-  'Smlouva k podpisu': 'Urgovat podpis u statutára',
-}
 
 /** Kč × urgency: anything due today or overdue counts double. */
 function urgency(today: ISODate, deadline: ISODate): number {
@@ -28,7 +20,9 @@ function urgency(today: ISODate, deadline: ISODate): number {
   return 1
 }
 
-export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
+export function exceptions(ds: Dataset, full: Dataset = ds, i18n: I18n = getI18n()): ExceptionItem[] {
+  const { t, f } = i18n
+  const { formatDate, formatDays } = f
   const today = ds.today
   const lk = lookup(ds)
   const items: ExceptionItem[] = []
@@ -43,13 +37,13 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
       id: `inv-${inv.id}`,
       type: 'overdue_invoice',
       object: `${inv.number} · ${institutionName(ds, inv.institutionId)}`,
-      detail: `${late} dní po splatnosti (splatná ${formatDate(inv.dueAt)})`,
+      detail: t('exceptions.detail.overdueInvoice', { late: formatDays(late), due: formatDate(inv.dueAt) }),
       ref: { metric: 'record', filters: { type: 'invoice', id: inv.id } },
       amount: inv.amount,
       ownerId: inv.ownerId,
-      action: late > 45 ? 'Předat k vymáhání, informovat vedení klienta' : 'Upomínka a telefonát na účtárnu klienta',
+      action: t(late > 45 ? 'exceptions.action.invoiceCollect' : 'exceptions.action.invoiceRemind'),
       deadline: addDays(today, late > 30 ? 0 : 2),
-      tags: late > 30 ? ['30+ dní'] : [],
+      tags: late > 30 ? [t('exceptions.tags.over30')] : [],
     })
   }
 
@@ -60,21 +54,22 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
     if (!stuck && !noNext) continue
     const inStage = daysInStage(d, today)
     const tags: string[] = []
-    if (stuck && noNext) tags.push(d.nextStepAt ? 'krok v minulosti' : 'bez dalšího kroku')
-    if (d.expectedCloseAt < today) tags.push('prošlé datum uzavření')
+    if (stuck && noNext) tags.push(t(d.nextStepAt ? 'exceptions.tags.stepPast' : 'exceptions.tags.noStep'))
+    if (d.expectedCloseAt < today) tags.push(t('exceptions.tags.closePassed'))
+    const stage = i18n.term('stage', d.stage)
     push({
       id: `deal-${d.id}`,
       type: stuck ? 'stuck_deal' : 'no_next_step',
-      object: dealName(ds, d),
+      object: dealName(ds, d, i18n),
       detail: stuck
-        ? `${inStage} dní ve fázi ${d.stage} (obvykle ${Math.round(medianForDeal(ds, d))})`
+        ? t('exceptions.detail.stuck', { days: formatDays(inStage), stage, typical: Math.round(medianForDeal(ds, d)) })
         : d.nextStepAt
-          ? `Další krok měl být ${formatDate(d.nextStepAt)} · ${d.stage}`
-          : `Bez naplánovaného kroku · ${d.stage}`,
+          ? t('exceptions.detail.nextStepWas', { date: formatDate(d.nextStepAt), stage })
+          : t('exceptions.detail.noStep', { stage }),
       ref: { metric: 'record', filters: { type: 'deal', id: d.id } },
       amount: weightedValue(d),
       ownerId: d.ownerId,
-      action: stuck ? STUCK_ACTION[d.stage as OpenStage] : 'Naplánovat další krok s klientem',
+      action: t(stuck ? `exceptions.action.stuck.${d.stage as OpenStage}` : 'exceptions.action.planStep'),
       deadline: addDays(today, stuck ? 2 : 1),
       tags,
     })
@@ -91,14 +86,14 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
     push({
       id: `fu-${ownerId}`,
       type: 'overdue_followups',
-      object: `${lk.rep.get(ownerId)?.name} · ${formatCount(acts.length, ['follow-up', 'follow-upy', 'follow-upů'])}`,
-      detail: `Nejstarší z ${formatDate(oldest)}, týká se ${formatCount(deals.size, ['dealu', 'dealů', 'dealů'])}`,
+      object: `${lk.rep.get(ownerId)?.name} · ${f.formatCount(acts.length, 'followups')}`,
+      detail: t('exceptions.detail.followups', { date: formatDate(oldest), deals: f.formatCount(deals.size, 'dealsGen') }),
       ref: { metric: 'overdue_followups', filters: { ownerId } },
       amount,
       ownerId,
-      action: 'Dokončit zpožděné follow-upy dnes, zbytek přeplánovat',
+      action: t('exceptions.action.followups'),
       deadline: today,
-      tags: acts.length >= 6 ? ['6+ zpožděných'] : [],
+      tags: acts.length >= 6 ? [t('exceptions.tags.followups6')] : [],
     })
   }
 
@@ -111,11 +106,11 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
       id: `sm-${c.id}`,
       type: 'unsigned_contract',
       object: `${c.id} · ${institutionName(ds, c.institutionId)}`,
-      detail: `Odesláno k podpisu ${formatDate(c.sentForSignatureAt)} (${waiting} dní)`,
+      detail: t('exceptions.detail.unsigned', { date: formatDate(c.sentForSignatureAt), days: formatDays(waiting) }),
       ref: { metric: 'record', filters: { type: 'deal', id: c.dealId } },
       amount: c.annualValue,
       ownerId: c.ownerId,
-      action: 'Urgovat podpis, ověřit podpisové právo',
+      action: t('exceptions.action.unsigned'),
       deadline: addDays(today, 1),
       tags: [],
     })
@@ -127,32 +122,32 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
     push({
       id: `ren-${r.contract.id}`,
       type: 'renewal_risk',
-      object: `${institutionName(ds, r.contract.institutionId)} · rámcová smlouva`,
-      detail: `Končí ${formatDate(r.contract.endAt)} (za ${r.daysLeft} dní), obnova není založená`,
+      object: t('exceptions.detail.renewalObject', { institution: institutionName(ds, r.contract.institutionId) }),
+      detail: t('exceptions.detail.renewal', { date: formatDate(r.contract.endAt), days: formatDays(r.daysLeft) }),
       ref: { metric: 'record', filters: { type: 'contract', id: r.contract.id } },
       amount: r.contract.annualValue,
       ownerId: r.contract.ownerId,
-      action: 'Založit deal na obnovu a domluvit schůzku',
+      action: t('exceptions.action.renewal'),
       deadline: addDays(r.contract.endAt, -30) < today ? today : addDays(r.contract.endAt, -30),
-      tags: r.daysLeft <= 30 ? ['do 30 dní'] : [],
+      tags: r.daysLeft <= 30 ? [t('exceptions.tags.within30')] : [],
     })
   }
 
   // Tender deadlines within 7 days still in preparation
-  for (const t of ds.tenders) {
-    if (t.status !== 'příprava') continue
-    const left = diffDays(today, t.submissionDeadline)
+  for (const tender of ds.tenders) {
+    if (tender.status !== 'příprava') continue
+    const left = diffDays(today, tender.submissionDeadline)
     if (left < 0 || left >= RULES.tenderDays) continue
     push({
-      id: `vz-${t.id}`,
+      id: `vz-${tender.id}`,
       type: 'tender_deadline',
-      object: `${t.id} · ${institutionName(ds, t.institutionId)}`,
-      detail: `Podání do ${formatDate(t.submissionDeadline)} (za ${left} dní), stav příprava`,
-      ref: { metric: 'record', filters: { type: 'tender', id: t.id } },
-      amount: t.value,
-      ownerId: t.ownerId,
-      action: 'Dokončit nabídku a nechat ji zkontrolovat',
-      deadline: addDays(t.submissionDeadline, -1) < today ? today : addDays(t.submissionDeadline, -1),
+      object: `${tender.id} · ${institutionName(ds, tender.institutionId)}`,
+      detail: t('exceptions.detail.tender', { date: formatDate(tender.submissionDeadline), days: formatDays(left) }),
+      ref: { metric: 'record', filters: { type: 'tender', id: tender.id } },
+      amount: tender.value,
+      ownerId: tender.ownerId,
+      action: t('exceptions.action.tender'),
+      deadline: addDays(tender.submissionDeadline, -1) < today ? today : addDays(tender.submissionDeadline, -1),
       tags: [],
     })
   }
@@ -167,11 +162,16 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
       id: `act-${rep.id}`,
       type: 'low_activity',
       object: rep.name,
-      detail: `${done} z ${Math.round(target)} aktivit za 4 týdny (${formatPercent(ratio, 0)} cíle)`,
+      detail: t('exceptions.detail.lowActivity', {
+        done: f.formatNumber(done),
+        target: f.formatNumber(target),
+        weeks: RULES.lowActivityWindowDays / 7,
+        pct: f.formatPercent(ratio, 0),
+      }),
       ref: { metric: 'activities_done', filters: { ownerId: rep.id, window: 'rolling28' } },
       amount: gap,
       ownerId: rep.id,
-      action: '1:1 s vedoucím týmu, týdenní plán aktivit',
+      action: t('exceptions.action.lowActivity'),
       deadline: addDays(today, 1),
       tags: [],
     })
@@ -184,14 +184,14 @@ export function exceptions(ds: Dataset, full: Dataset = ds): ExceptionItem[] {
     push({
       id: `bp-${p.id}`,
       type: 'unmatched_payment',
-      object: `Platba ${formatDate(p.receivedAt)} · VS ${p.variableSymbol}`,
+      object: t('exceptions.detail.paymentObject', { date: formatDate(p.receivedAt), vs: p.variableSymbol }),
       detail: candidate
-        ? `Pravděpodobně ${candidate.number} (${institutionName(full, candidate.institutionId)}), shoda částky`
-        : `Plátce: ${p.counterparty}, žádná faktura se stejnou částkou`,
+        ? t('exceptions.detail.paymentCandidate', { invoice: candidate.number, institution: institutionName(full, candidate.institutionId) })
+        : t('exceptions.detail.paymentNoCandidate', { payer: p.counterparty }),
       ref: { metric: 'record', filters: { type: 'payment', id: p.id } },
       amount: p.amount,
       ownerId: candidate?.ownerId ?? null,
-      action: candidate ? `Spárovat s ${candidate.number} a zrušit upomínku` : 'Dohledat plátce, případně vrátit platbu',
+      action: candidate ? t('exceptions.action.paymentMatch', { invoice: candidate.number }) : t('exceptions.action.paymentTrace'),
       deadline: addDays(today, 2),
       tags: [],
     })

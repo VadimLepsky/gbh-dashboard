@@ -5,10 +5,12 @@ import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { useI18n } from '@/components/i18n-provider'
 import { Brand, DemoBadge, NavLinks } from './sidebar'
 import { RoleSwitcher } from './role-switcher'
 
 export function MobileNav() {
+  const { t } = useI18n()
   const [open, setOpen] = useState(false)
   return (
     <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border/60 bg-sidebar/95 px-4 py-2.5 backdrop-blur lg:hidden">
@@ -16,13 +18,13 @@ export function MobileNav() {
       <div className="flex items-center gap-1">
         <DemoBadge compact />
         <ThemeToggle />
-        <Button variant="ghost" size="icon-sm" aria-label="Otevřít menu" onClick={() => setOpen(true)}>
+        <Button variant="ghost" size="icon-sm" aria-label={t('nav.openMenu')} onClick={() => setOpen(true)}>
           <Menu className="size-5" />
         </Button>
       </div>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="gap-0 p-0 data-[side=left]:w-[280px]">
-          <SheetTitle className="sr-only">Navigace</SheetTitle>
+          <SheetTitle className="sr-only">{t('nav.menu')}</SheetTitle>
           <div className="px-5 pt-5 pb-4">
             <Brand />
             <DemoBadge className="mt-3" />

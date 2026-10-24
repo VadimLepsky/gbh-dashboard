@@ -1,7 +1,9 @@
-import { formatCZK, formatCZKCompact, formatPercent } from '@/lib/format'
+'use client'
+
 import { DrillButton } from '@/components/drill/drill-trigger'
 import { Legend } from '@/components/charts/chart-kit'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/components/i18n-provider'
 
 export interface ForecastBar {
   key: string
@@ -15,6 +17,8 @@ export interface ForecastBar {
 
 /** Bullet bars: won (solid) + weighted pipeline (light) against the plan tick. */
 export function ForecastBars({ rows, legend = true }: { rows: ForecastBar[]; legend?: boolean }) {
+  const { t, f } = useI18n()
+  const { formatCZK, formatCZKCompact, formatPercent } = f
   // Each row is scaled to its own plan, so the plan tick lines up; the axis tops out at 2× plan.
   const scale = Math.min(2, Math.max(1.25, ...rows.map((r) => (r.plan ? r.total / r.plan : 0))) * 1.05)
   return (
@@ -22,9 +26,9 @@ export function ForecastBars({ rows, legend = true }: { rows: ForecastBar[]; leg
       {legend && (
         <Legend
           items={[
-            { label: 'Vyhráno', color: 'var(--chart-1)' },
-            { label: 'Vážená pipeline', color: 'color-mix(in oklab, var(--chart-1) 28%, transparent)' },
-            { label: 'Plán', color: 'var(--foreground)', line: true },
+            { label: t('ui.forecast.won'), color: 'var(--chart-1)' },
+            { label: t('ui.forecast.weighted'), color: 'color-mix(in oklab, var(--chart-1) 28%, transparent)' },
+            { label: t('ui.forecast.plan'), color: 'var(--foreground)', line: true },
           ]}
         />
       )}
@@ -36,9 +40,9 @@ export function ForecastBars({ rows, legend = true }: { rows: ForecastBar[]; leg
           return (
             <DrillButton
               key={r.key}
-              req={{ metric: 'weighted_forecast', filters: r.filter, title: `Prognóza · ${r.label}` }}
+              req={{ metric: 'weighted_forecast', filters: r.filter, title: t('ui.forecast.title', { label: r.label }) }}
               className="group grid grid-cols-[9rem_1fr_5.5rem] items-center gap-3 text-[13px] sm:grid-cols-[10rem_1fr_7.5rem]"
-              title={`Vyhráno ${formatCZK(r.won)} · vážená pipeline ${formatCZK(r.weighted)} · plán ${formatCZK(r.plan)}`}
+              title={t('ui.forecast.tooltip', { won: formatCZK(r.won), weighted: formatCZK(r.weighted), plan: formatCZK(r.plan) })}
             >
               <span className="truncate group-hover:underline">{r.label}</span>
               <span className="relative h-4 overflow-hidden rounded-[4px] bg-muted/70">
