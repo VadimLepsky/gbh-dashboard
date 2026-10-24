@@ -8,10 +8,10 @@ import {
   monthRange,
 } from '../data/dates'
 import type { ISODate } from '../data/types'
-import { formatDate, formatDateShort, formatMonth, formatMonthName } from '../format'
+import { getI18n, type I18n } from '../i18n'
+import { TRAILING_MONTHS } from './constants'
 
-/** Look-back for rates that need a full year of history (renewals, tenders, manual matches). */
-export const TRAILING_MONTHS = 12
+export { TRAILING_MONTHS }
 
 export interface DateRange {
   start: ISODate
@@ -46,8 +46,8 @@ function build(kind: PeriodKind, key: string, start: ISODate, end: ISODate, labe
   return { kind, key, start, end, label, asOf: minDate(end, today), isCurrent: start <= today && today <= end }
 }
 
-export function monthPeriod(ym: string, today: ISODate): Period {
-  return build('month', ym, `${ym}-01`, endOfMonth(`${ym}-01`), formatMonth(ym), today)
+export function monthPeriod(ym: string, today: ISODate, i18n: I18n = getI18n()): Period {
+  return build('month', ym, `${ym}-01`, endOfMonth(`${ym}-01`), i18n.f.formatMonth(ym), today)
 }
 
 export function quarterPeriod(year: number, q: number, today: ISODate): Period {
@@ -56,22 +56,22 @@ export function quarterPeriod(year: number, q: number, today: ISODate): Period {
   return build('quarter', `${year}-Q${q}`, `${startYm}-01`, endOfMonth(`${endYm}-01`), `Q${q} ${year}`, today)
 }
 
-export function yearPeriod(year: number, today: ISODate): Period {
-  return build('year', String(year), `${year}-01-01`, `${year}-12-31`, `Rok ${year}`, today)
+export function yearPeriod(year: number, today: ISODate, i18n: I18n = getI18n()): Period {
+  return build('year', String(year), `${year}-01-01`, `${year}-12-31`, i18n.t('period.year', { year }), today)
 }
 
-export function parsePeriod(q: PeriodQuery, today: ISODate): Period {
+export function parsePeriod(q: PeriodQuery, today: ISODate, i18n: I18n = getI18n()): Period {
   const raw = q.period ?? ''
-  if (/^\d{4}-(0[1-9]|1[0-2])$/.test(raw) && raw <= today.slice(0, 7)) return monthPeriod(raw, today)
+  if (/^\d{4}-(0[1-9]|1[0-2])$/.test(raw) && raw <= today.slice(0, 7)) return monthPeriod(raw, today, i18n)
   const qm = /^(\d{4})-Q([1-4])$/.exec(raw)
   if (qm) return quarterPeriod(Number(qm[1]), Number(qm[2]), today)
-  if (/^\d{4}$/.test(raw) && raw <= today.slice(0, 4)) return yearPeriod(Number(raw), today)
+  if (/^\d{4}$/.test(raw) && raw <= today.slice(0, 4)) return yearPeriod(Number(raw), today, i18n)
   if (raw === 'custom' && q.from && q.to && ISO_RE.test(q.from) && ISO_RE.test(q.to)) {
     const from = q.from <= q.to ? q.from : q.to
     const to = minDate(q.from <= q.to ? q.to : q.from, today)
-    return build('custom', 'custom', from, to, `${formatDate(from)} – ${formatDate(to)}`, today)
+    return build('custom', 'custom', from, to, `${i18n.f.formatDate(from)} – ${i18n.f.formatDate(to)}`, today)
   }
-  return monthPeriod(today.slice(0, 7), today)
+  return monthPeriod(today.slice(0, 7), today, i18n)
 }
 
 export function parseCompare(value: string | undefined): CompareMode {
@@ -82,7 +82,8 @@ export function parseCompare(value: string | undefined): CompareMode {
  * Comparison range. A running period is compared like-for-like:
  * 1.–19. 10. against 1.–19. 9. (or 1.–19. 10. last year), never against a full month.
  */
-export function comparisonPeriod(p: Period, mode: CompareMode, today: ISODate): Period {
+export function comparisonPeriod(p: Period, mode: CompareMode, today: ISODate, i18n: I18n = getI18n()): Period {
+  const { formatDate, formatDateShort, formatMonth } = i18n.f
   let start: ISODate
   let end: ISODate
   if (mode === 'yoy') {
@@ -118,14 +119,14 @@ export function comparisonPeriod(p: Period, mode: CompareMode, today: ISODate): 
       : p.kind === 'quarter'
         ? `Q${Math.floor((Number(start.slice(5, 7)) - 1) / 3) + 1} ${start.slice(0, 4)}`
         : p.kind === 'year'
-          ? `rok ${start.slice(0, 4)}`
+          ? i18n.t('period.yearLower', { year: start.slice(0, 4) })
           : `${formatDate(start)} – ${formatDate(end)}`
   return build(p.kind, `cmp-${start}`, start, end, label, today)
 }
 
-export function compareLabel(mode: CompareMode, cmp: Period): string {
-  if (mode === 'plan') return 'vs. plán'
-  return `vs. ${cmp.label}`
+export function compareLabel(mode: CompareMode, cmp: Period, i18n: I18n = getI18n()): string {
+  if (mode === 'plan') return i18n.t('compare.vsPlan')
+  return i18n.t('compare.vs', { label: cmp.label })
 }
 
 /** Month keys touched by the range. */
@@ -137,8 +138,8 @@ export function inRange(date: ISODate | null | undefined, r: DateRange): boolean
   return !!date && date >= r.start && date <= r.end
 }
 
-export function periodTitle(p: Period): string {
-  if (p.kind === 'month') return formatMonthName(p.key)
+export function periodTitle(p: Period, i18n: I18n = getI18n()): string {
+  if (p.kind === 'month') return i18n.f.formatMonthName(p.key)
   return p.label
 }
 
@@ -148,21 +149,20 @@ export interface PeriodPreset {
   hint: string
 }
 
-export function periodPresets(today: ISODate): PeriodPreset[] {
+export function periodPresets(today: ISODate, i18n: I18n = getI18n()): PeriodPreset[] {
+  const { formatMonth } = i18n.f
   const ym = today.slice(0, 7)
   const prev = addMonthsToKey(ym, -1)
   const year = Number(today.slice(0, 4))
   const q = Math.floor((Number(today.slice(5, 7)) - 1) / 3) + 1
   return [
-    { key: ym, label: 'Tento měsíc', hint: formatMonth(ym) },
-    { key: prev, label: 'Minulý měsíc', hint: formatMonth(prev) },
-    { key: `${year}-Q${q}`, label: 'Kvartál', hint: `Q${q} ${year}` },
-    { key: String(year), label: 'Rok', hint: String(year) },
+    { key: ym, label: i18n.t('period.presets.thisMonth'), hint: formatMonth(ym) },
+    { key: prev, label: i18n.t('period.presets.lastMonth'), hint: formatMonth(prev) },
+    { key: `${year}-Q${q}`, label: i18n.t('period.presets.quarter'), hint: `Q${q} ${year}` },
+    { key: String(year), label: i18n.t('period.presets.year'), hint: String(year) },
   ]
 }
 
-export const COMPARE_OPTIONS: { key: CompareMode; label: string }[] = [
-  { key: 'prev', label: 'vs. předchozí období' },
-  { key: 'plan', label: 'vs. plán' },
-  { key: 'yoy', label: 'vs. loni' },
-]
+export function compareOptions(i18n: I18n = getI18n()): { key: CompareMode; label: string }[] {
+  return (['prev', 'plan', 'yoy'] as const).map((key) => ({ key, label: i18n.t(`compare.options.${key}`) }))
+}

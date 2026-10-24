@@ -9,7 +9,8 @@ institutions. It answers the questions a sales director asks every week:
 4. How much have we actually earned: sold → invoiced → paid?
 5. What needs attention today, who owns it, and by when?
 
-**All data is simulated.** Institutions are fictional. The UI is in Czech.
+**All data is simulated.** Institutions are fictional. The UI is in Czech; an English version of every page lives under
+the `/en` prefix (`/en`, `/en/pipeline`, …). There is no visible language switch, the language comes only from the URL.
 
 ## What's inside
 
@@ -40,8 +41,13 @@ are computed.
   memoized per day.
 - `lib/metrics/*` — the only place numbers are computed. `dictionary.ts` holds one definition per metric, shown in
   tooltips and on `/slovnik`.
+- `messages/cs.json`, `messages/en.json` — all UI texts, metric definitions and translations of domain values (stages,
+  lost reasons, products). `lib/i18n` provides `t()` / plurals / `term()` plus a formatter per language
+  (cs `1 087 400 Kč`, `14,5 %`, `19. 10. 2026` · en `CZK 1,087,400`, `14.5%`, `19 Oct 2026`). `proxy.ts` serves Czech at
+  the unprefixed URLs and English under `/en`. Proper names (people, institutions, regions) stay as they are.
 - `lib/metrics/__tests__` — reconciliation tests: reps sum to the team and company, commissions payable + pending =
-  accrued, invoiced ≥ collected, drill-down sum = KPI, all story hooks present on several dates.
+  accrued, invoiced ≥ collected, drill-down sum = KPI, all story hooks present on several dates; both dictionaries
+  have the same keys and every view and drill-down resolves without a missing text in either language.
 
 ## Stack
 

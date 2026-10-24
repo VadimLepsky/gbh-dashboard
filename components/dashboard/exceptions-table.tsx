@@ -1,14 +1,14 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { formatCZK, formatCZKCompact, formatNumber } from '@/lib/format'
-import { EXCEPTION_LABEL, type ExceptionItem, type ExceptionType } from '@/lib/metrics/exceptions-shared'
+import { exceptionLabel, type ExceptionItem, type ExceptionType } from '@/lib/metrics/exceptions-shared'
 import { cn } from '@/lib/utils'
 import { DrillButton } from '@/components/drill/drill-trigger'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { EXCEPTION_ICON, deadlineLabel } from './exception-list'
 import { EmptyState, Pill } from './primitives'
 import { DataTable, Td, Th } from './table'
+import { useI18n } from '@/components/i18n-provider'
 
 export function ExceptionsTable({
   items,
@@ -19,6 +19,9 @@ export function ExceptionsTable({
   owners: Record<string, string>
   today: string
 }) {
+  const i18n = useI18n()
+  const { t } = i18n
+  const { formatCZK, formatCZKCompact, formatNumber } = i18n.f
   const [owner, setOwner] = useState('all')
   const [type, setType] = useState<ExceptionType | 'all'>('all')
 
@@ -35,9 +38,9 @@ export function ExceptionsTable({
     (it) => (owner === 'all' || (owner === 'none' ? !it.ownerId : it.ownerId === owner)) && (type === 'all' || it.type === type),
   )
   const ownerItems = [
-    { value: 'all', label: 'Všichni vlastníci' },
+    { value: 'all', label: t('ui.exTable.allOwners') },
     ...Object.entries(owners).map(([id, name]) => ({ value: id, label: name })),
-    ...(items.some((i) => !i.ownerId) ? [{ value: 'none', label: 'Bez vlastníka (účtárna)' }] : []),
+    ...(items.some((i) => !i.ownerId) ? [{ value: 'none', label: t('ui.exTable.noOwner') }] : []),
   ]
 
   return (
@@ -51,23 +54,23 @@ export function ExceptionsTable({
             type === 'all' ? 'bg-foreground text-background ring-foreground' : 'bg-card ring-border hover:bg-muted',
           )}
         >
-          Vše · {formatNumber(items.length)}
+          {t('ui.exTable.all', { count: formatNumber(items.length) })}
         </button>
-        {types.map(([t, s]) => {
-          const Icon = EXCEPTION_ICON[t]
+        {types.map(([key, s]) => {
+          const Icon = EXCEPTION_ICON[key]
           return (
             <button
-              key={t}
+              key={key}
               type="button"
-              onClick={() => setType(type === t ? 'all' : t)}
+              onClick={() => setType(type === key ? 'all' : key)}
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 transition-colors',
-                type === t ? 'bg-foreground text-background ring-foreground' : 'bg-card ring-border hover:bg-muted',
+                type === key ? 'bg-foreground text-background ring-foreground' : 'bg-card ring-border hover:bg-muted',
               )}
             >
               <Icon className="size-3" />
-              {EXCEPTION_LABEL[t]} · {s.count}
-              <span className={cn('font-normal', type === t ? 'text-background/70' : 'text-muted-foreground')}>
+              {exceptionLabel(i18n, key)} · {s.count}
+              <span className={cn('font-normal', type === key ? 'text-background/70' : 'text-muted-foreground')}>
                 {formatCZKCompact(s.amount)}
               </span>
             </button>
@@ -75,7 +78,7 @@ export function ExceptionsTable({
         })}
         <div className="ml-auto">
           <Select value={owner} items={ownerItems} onValueChange={(v) => setOwner(String(v))}>
-            <SelectTrigger className="h-8 min-w-48 bg-card" aria-label="Vlastník">
+            <SelectTrigger className="h-8 min-w-48 bg-card" aria-label={t('ui.exTable.owner')}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
@@ -90,23 +93,23 @@ export function ExceptionsTable({
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState title="Nic k řešení">Pro zvolený filtr nejsou žádné výjimky.</EmptyState>
+        <EmptyState title={t('ui.exTable.emptyTitle')}>{t('ui.exTable.emptyText')}</EmptyState>
       ) : (
         <DataTable minWidth={880}>
           <thead>
             <tr>
-              <Th>Typ</Th>
-              <Th>Objekt</Th>
-              <Th align="right">Kč v ohrožení</Th>
-              <Th>Vlastník</Th>
-              <Th>Další krok</Th>
-              <Th align="right">Termín</Th>
+              <Th>{t('ui.exTable.type')}</Th>
+              <Th>{t('ui.exTable.object')}</Th>
+              <Th align="right">{t('ui.exTable.atRisk')}</Th>
+              <Th>{t('ui.exTable.owner')}</Th>
+              <Th>{t('ui.exTable.nextStep')}</Th>
+              <Th align="right">{t('ui.exTable.deadline')}</Th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((it) => {
               const Icon = EXCEPTION_ICON[it.type]
-              const dl = deadlineLabel(today, it.deadline)
+              const dl = deadlineLabel(i18n, today, it.deadline)
               return (
                 <tr key={it.id} className="group hover:bg-muted/40">
                   <Td className="w-44">
@@ -114,7 +117,7 @@ export function ExceptionsTable({
                       <span className="flex size-6 items-center justify-center rounded-md bg-muted">
                         <Icon className="size-3.5" />
                       </span>
-                      {EXCEPTION_LABEL[it.type]}
+                      {exceptionLabel(i18n, it.type)}
                     </span>
                   </Td>
                   <Td>
@@ -124,9 +127,9 @@ export function ExceptionsTable({
                     </DrillButton>
                     {it.tags.length > 0 && (
                       <span className="mt-1 flex flex-wrap gap-1">
-                        {it.tags.map((t) => (
-                          <Pill key={t} tone="warning" className="px-1.5 py-0 text-[10px]">
-                            {t}
+                        {it.tags.map((tag) => (
+                          <Pill key={tag} tone="warning" className="px-1.5 py-0 text-[10px]">
+                            {tag}
                           </Pill>
                         ))}
                       </span>
@@ -135,7 +138,7 @@ export function ExceptionsTable({
                   <Td align="right" className="font-medium">
                     {formatCZK(it.amount)}
                   </Td>
-                  <Td className="whitespace-nowrap">{it.ownerId ? owners[it.ownerId] : 'účtárna'}</Td>
+                  <Td className="whitespace-nowrap">{it.ownerId ? owners[it.ownerId] : t('ui.accounting')}</Td>
                   <Td className="max-w-[280px] text-muted-foreground">{it.action}</Td>
                   <Td align="right">
                     <Pill tone={dl.tone}>{dl.text}</Pill>

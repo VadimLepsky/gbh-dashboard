@@ -1,9 +1,11 @@
-import { formatCZK, formatDateShort, formatDays, formatPercent } from '@/lib/format'
+'use client'
+
 import type { DealListRow } from '@/lib/metrics/views/pipeline'
 import { DrillButton } from '@/components/drill/drill-trigger'
 import { cn } from '@/lib/utils'
 import { EmptyState, Pill } from './primitives'
 import { DataTable, Td, Th } from './table'
+import { useI18n } from '@/components/i18n-provider'
 
 export function DealList({
   rows,
@@ -18,17 +20,19 @@ export function DealList({
   empty: string
   limit?: number
 }) {
+  const { t, f } = useI18n()
+  const { formatCZK, formatDateShort, formatDays, formatPercent } = f
   if (!rows.length) return <EmptyState title={empty} />
   return (
     <>
       <DataTable minWidth={560}>
         <thead>
           <tr>
-            <Th>Deal</Th>
-            <Th>Fáze</Th>
-            <Th align="right">Hodnota</Th>
-            {mode === 'closing' ? <Th align="right">Uzavření</Th> : <Th align="right">Ve fázi</Th>}
-            <Th>Další krok</Th>
+            <Th>{t('ui.dealList.deal')}</Th>
+            <Th>{t('ui.dealList.stage')}</Th>
+            <Th align="right">{t('ui.dealList.value')}</Th>
+            <Th align="right">{t(mode === 'closing' ? 'ui.dealList.close' : 'ui.dealList.inStage')}</Th>
+            <Th>{t('ui.dealList.nextStep')}</Th>
           </tr>
         </thead>
         <tbody>
@@ -43,7 +47,7 @@ export function DealList({
                   </DrillButton>
                 </Td>
                 <Td className="whitespace-nowrap">
-                  {r.stage}
+                  {r.stageLabel}
                   <span className="ml-1 text-xs text-muted-foreground">{formatPercent(r.prob, 0)}</span>
                 </Td>
                 <Td align="right" className="font-medium">
@@ -54,7 +58,7 @@ export function DealList({
                 ) : (
                   <Td align="right">
                     <span className="font-medium text-negative">{formatDays(r.inStage)}</span>
-                    <span className="block text-[11px] text-muted-foreground">obvykle {r.typical}</span>
+                    <span className="block text-[11px] text-muted-foreground">{t('ui.dealList.usually', { days: r.typical })}</span>
                   </Td>
                 )}
                 <Td className="max-w-[200px]">
@@ -63,7 +67,7 @@ export function DealList({
                       {r.nextStep} · {formatDateShort(r.nextStepAt)}
                     </span>
                   ) : (
-                    <Pill tone="negative">bez kroku</Pill>
+                    <Pill tone="negative">{t('ui.dealList.noStep')}</Pill>
                   )}
                 </Td>
               </tr>
@@ -72,7 +76,7 @@ export function DealList({
         </tbody>
       </DataTable>
       {rows.length > limit && (
-        <p className="mt-2 text-xs text-muted-foreground">+ dalších {rows.length - limit} v detailu</p>
+        <p className="mt-2 text-xs text-muted-foreground">{t('ui.dealList.more', { count: rows.length - limit })}</p>
       )}
     </>
   )

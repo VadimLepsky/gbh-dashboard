@@ -1,12 +1,13 @@
 'use client'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { formatNumber, formatValue, type ValueFormat } from '@/lib/format'
+import type { Formatter, ValueFormat } from '@/lib/format'
 import type { CellFormat, DrillRequest, DrillResult, DrillRow } from '@/lib/metrics/drill-types'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useI18n } from '@/components/i18n-provider'
 
 interface Props {
   open: boolean
@@ -17,27 +18,28 @@ interface Props {
   onRowOpen: (req: DrillRequest) => void
 }
 
-function fmt(value: string | number | null, format: CellFormat): string {
+function fmt(f: Formatter, value: string | number | null, format: CellFormat): string {
   if (format === 'badge' || format === 'text') return value === null || value === '' ? '—' : String(value)
-  return formatValue(value, format as ValueFormat)
+  return f.formatValue(value, format as ValueFormat)
 }
 
 const TONE_TEXT = { negative: 'text-negative', warning: 'text-warning', positive: 'text-positive' } as const
 
 export function DrillSheet({ open, onOpenChange, state, canGoBack, onBack, onRowOpen }: Props) {
+  const { t } = useI18n()
   const result = state?.result ?? null
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-2xl data-[side=right]:xl:max-w-3xl">
         <div className="flex items-start gap-2 border-b px-5 pt-5 pb-4 pr-12">
           {canGoBack && (
-            <Button variant="ghost" size="icon-sm" onClick={onBack} aria-label="Zpět" className="-ml-2 shrink-0">
+            <Button variant="ghost" size="icon-sm" onClick={onBack} aria-label={t('drill.ui.back')} className="-ml-2 shrink-0">
               <ChevronLeft className="size-4" />
             </Button>
           )}
           <div className="min-w-0">
             <SheetTitle className="text-base font-semibold">
-              {result?.title ?? state?.req.title ?? 'Načítám…'}
+              {result?.title ?? state?.req.title ?? t('shell.loadingDots')}
             </SheetTitle>
             <SheetDescription className="mt-0.5 text-xs">
               {result?.subtitle ?? ' '}
@@ -49,7 +51,7 @@ export function DrillSheet({ open, onOpenChange, state, canGoBack, onBack, onRow
         <div className="flex-1 overflow-y-auto">
           {!result && !state?.error && <LoadingState />}
           {state?.error && (
-            <p className="p-5 text-sm text-muted-foreground">Data se nepodařilo načíst. Zkuste to prosím znovu.</p>
+            <p className="p-5 text-sm text-muted-foreground">{t('drill.ui.error')}</p>
           )}
           {result && <DrillBody result={result} onRowOpen={onRowOpen} />}
         </div>
@@ -73,6 +75,7 @@ function LoadingState() {
 }
 
 function DrillBody({ result, onRowOpen }: { result: DrillResult; onRowOpen: (req: DrillRequest) => void }) {
+  const { t, f } = useI18n()
   const sum =
     result.sumKey && !result.truncated
       ? result.rows.reduce((acc, r) => acc + Number(r.cells[result.sumKey!] ?? 0), 0)
@@ -83,14 +86,10 @@ function DrillBody({ result, onRowOpen }: { result: DrillResult; onRowOpen: (req
         <div>
           <div className="text-xs text-muted-foreground">{result.total.label}</div>
           <div className="tabular text-2xl font-semibold tracking-tight">
-            {fmt(result.total.value, result.total.format)}
+            {fmt(f, result.total.value, result.total.format)}
           </div>
         </div>
-        {result.countLabel && (
-          <div className="text-xs text-muted-foreground">
-            {formatNumber(result.count)} {result.countLabel}
-          </div>
-        )}
+        {result.countText && <div className="text-xs text-muted-foreground">{result.countText}</div>}
       </div>
 
       {result.detail && (
@@ -105,16 +104,16 @@ function DrillBody({ result, onRowOpen }: { result: DrillResult; onRowOpen: (req
           </dl>
           {result.detail.timeline && result.detail.timeline.length > 0 && (
             <ol className="relative flex flex-col gap-2 border-l border-border pl-4 text-[13px]">
-              {result.detail.timeline.map((t, i) => (
+              {result.detail.timeline.map((item, i) => (
                 <li key={i} className="relative">
                   <span
                     className={cn(
                       'absolute top-1.5 -left-[21px] size-2 rounded-full ring-2 ring-popover',
-                      t.tone === 'positive' ? 'bg-positive' : t.tone === 'negative' ? 'bg-negative' : 'bg-muted-foreground/50',
+                      item.tone === 'positive' ? 'bg-positive' : item.tone === 'negative' ? 'bg-negative' : 'bg-muted-foreground/50',
                     )}
                   />
-                  <span className="tabular text-muted-foreground">{fmt(t.date, 'date')}</span>
-                  <span className="ml-2">{t.label}</span>
+                  <span className="tabular text-muted-foreground">{fmt(f, item.date, 'date')}</span>
+                  <span className="ml-2">{item.label}</span>
                 </li>
               ))}
             </ol>
@@ -160,7 +159,7 @@ function DrillBody({ result, onRowOpen }: { result: DrillResult; onRowOpen: (req
                         c.secondary && 'hidden md:table-cell',
                       )}
                     >
-                      {i === 0 ? 'Součet' : c.key === result.sumKey ? <span className="tabular">{fmt(sum, c.format)}</span> : null}
+                      {i === 0 ? t('drill.ui.sum') : c.key === result.sumKey ? <span className="tabular">{fmt(f, sum, c.format)}</span> : null}
                     </td>
                   ))}
                 </tr>
@@ -169,20 +168,20 @@ function DrillBody({ result, onRowOpen }: { result: DrillResult; onRowOpen: (req
           </table>
           {result.truncated && (
             <p className="px-5 py-3 text-xs text-muted-foreground">
-              Zobrazeno {formatNumber(result.rows.length)} z {formatNumber(result.count)} záznamů. Součet a počet zahrnují
-              všechny.
+              {t('drill.ui.truncated', { shown: f.formatNumber(result.rows.length), total: f.formatNumber(result.count) })}
             </p>
           )}
         </div>
       )}
       {result.columns.length > 0 && result.rows.length === 0 && (
-        <p className="border-t px-5 py-6 text-sm text-muted-foreground">Žádné záznamy pro zvolené období.</p>
+        <p className="border-t px-5 py-6 text-sm text-muted-foreground">{t('drill.ui.empty')}</p>
       )}
     </div>
   )
 }
 
 function Row({ row, result, onOpen }: { row: DrillRow; result: DrillResult; onOpen: (req: DrillRequest) => void }) {
+  const { f } = useI18n()
   const clickable = !!row.ref && row.ref.metric === 'record'
   return (
     <tr
@@ -222,7 +221,7 @@ function Row({ row, result, onOpen }: { row: DrillRow; result: DrillResult; onOp
               </span>
             ) : (
               <span className={cn(i === 0 && 'font-medium', i === 0 && clickable && 'group-hover:underline')}>
-                {fmt(value, c.format)}
+                {fmt(f, value, c.format)}
               </span>
             )}
             {i === 0 && clickable && (

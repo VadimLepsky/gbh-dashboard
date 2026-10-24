@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import { ArrowRight } from 'lucide-react'
-import { buildContext } from '@/lib/metrics/context'
+import { pageContext, pageMetadata, type PageProps } from '@/lib/page'
 import { moneyView, PAYMENT_TERM_DAYS } from '@/lib/metrics/views/money'
 import { INVOICE_AFTER_SIGN_DAYS } from '@/lib/metrics/money'
 import { RULES } from '@/lib/metrics/exceptions-shared'
-import { formatCount, formatCZK, formatCZKCompact, formatDate, formatDateShort, formatPercent } from '@/lib/format'
 import { PageHeader } from '@/components/shell/page-header'
 import { KpiGrid } from '@/components/dashboard/kpi-grid'
 import { EmptyState, Pill, Section } from '@/components/dashboard/primitives'
@@ -13,7 +12,9 @@ import { DrillButton, DrillLink } from '@/components/drill/drill-trigger'
 import { DsoChart } from '@/components/charts/dso-chart'
 import { Legend } from '@/components/charts/chart-kit'
 
-export const metadata: Metadata = { title: 'Peníze' }
+export function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  return pageMetadata(params, 'nav.items.money')
+}
 
 const BUCKET_COLOR: Record<string, string> = {
   current: 'var(--chart-compare)',
@@ -22,22 +23,23 @@ const BUCKET_COLOR: Record<string, string> = {
   '60+': 'var(--negative)',
 }
 
-export default async function MoneyPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const ctx = buildContext(await searchParams)
+export default async function MoneyPage(props: PageProps) {
+  const { ctx, t, tn, term, f } = await pageContext(props)
+  const { formatCount, formatCZK, formatCZKCompact, formatDate, formatDateShort, formatDays, formatPercent } = f
   const v = moneyView(ctx)
   const steps = v.chain.steps
   const agTotal = v.aging.total || 1
 
   return (
     <>
-      <PageHeader ctx={ctx} title="Peníze" description="Prodáno → fakturováno → uhrazeno" />
+      <PageHeader ctx={ctx} title={t('nav.items.money')} description={t('pages.money.description')} />
 
       <KpiGrid kpis={v.kpis} />
 
       <Section
         className="mt-3"
-        title="Řetězec od výhry k penězům"
-        description={`Dealy vyhrané v období ${ctx.period.label} a kde jsou dnes`}
+        title={t('pages.money.chain')}
+        description={t('pages.money.chainDesc', { period: ctx.period.label })}
       >
         <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
           {steps.map((s, i) => (
@@ -47,12 +49,12 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
                 className="flex h-full w-full flex-col rounded-lg bg-surface px-4 py-3 ring-1 ring-foreground/[0.05] transition-colors hover:bg-muted/60"
               >
                 <span className="text-xs text-muted-foreground">
-                  {i + 1}. {s.label}
+                  {i + 1}. {t(`chain.${s.id}`)}
                 </span>
                 <span className="tabular mt-1 text-lg font-semibold tracking-tight">{formatCZK(s.value)}</span>
                 <span className="mt-0.5 text-xs text-muted-foreground">
-                  {formatCount(s.count, ['deal', 'dealy', 'dealů'])}
-                  {i > 0 && steps[0].value > 0 && <> · {formatPercent(s.value / steps[0].value, 0)} hodnoty</>}
+                  {formatCount(s.count, 'deals')}
+                  {i > 0 && steps[0].value > 0 && <> · {t('pages.money.ofValue', { pct: formatPercent(s.value / steps[0].value, 0) })}</>}
                 </span>
               </DrillButton>
               {i < steps.length - 1 && (
@@ -65,30 +67,30 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
           {v.chain.waitingSignature.length > 0 && (
             <DrillButton req={{ metric: 'unsigned_contracts' }}>
               <Pill tone="warning">
-                {formatCount(v.chain.waitingSignature.length, ['smlouva čeká', 'smlouvy čekají', 'smluv čeká'])} na podpis déle než {RULES.unsignedDays} dní
+                {tn('pages.money.waitingSignature', v.chain.waitingSignature.length, { days: formatDays(RULES.unsignedDays) })}
               </Pill>
             </DrillButton>
           )}
           {v.chain.signedNotInvoiced.length > 0 && (
             <Pill tone="warning">
-              {formatCount(v.chain.signedNotInvoiced.length, ['podepsaná smlouva', 'podepsané smlouvy', 'podepsaných smluv'])} bez faktury déle než {INVOICE_AFTER_SIGN_DAYS} dní
+              {tn('pages.money.signedNotInvoiced', v.chain.signedNotInvoiced.length, { days: formatDays(INVOICE_AFTER_SIGN_DAYS) })}
             </Pill>
           )}
           {v.chain.overdueInChain.length > 0 && (
             <DrillButton req={{ metric: 'overdue' }}>
               <Pill tone="negative">
-                {formatCount(v.chain.overdueInChain.length, ['faktura', 'faktury', 'faktur'])} z těchto dealů po splatnosti
+                {tn('pages.money.overdueInChain', v.chain.overdueInChain.length)}
               </Pill>
             </DrillButton>
           )}
           {v.chain.waitingSignature.length + v.chain.signedNotInvoiced.length + v.chain.overdueInChain.length === 0 && (
-            <Pill tone="positive">Nic se nezaseklo</Pill>
+            <Pill tone="positive">{t('pages.money.nothingStuck')}</Pill>
           )}
         </div>
       </Section>
 
       <div className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-5">
-        <Section className="xl:col-span-3" title="Stáří pohledávek" description={`Neuhrazené faktury k ${formatDate(v.aging.asOf)} podle dní po splatnosti`}>
+        <Section className="xl:col-span-3" title={t('pages.money.aging')} description={t('pages.money.agingDesc', { date: formatDate(v.aging.asOf) })}>
           <div className="flex h-3 w-full gap-0.5 overflow-hidden rounded-full">
             {v.aging.buckets.map((b) =>
               b.value > 0 ? (
@@ -113,13 +115,13 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
           <DataTable className="mt-4" minWidth={620}>
             <thead>
               <tr>
-                <Th>Instituce</Th>
+                <Th>{t('pages.money.institution')}</Th>
                 {v.aging.buckets.map((b) => (
                   <Th key={b.id} align="right">
                     {b.label}
                   </Th>
                 ))}
-                <Th align="right">Celkem</Th>
+                <Th align="right">{t('pages.money.total')}</Th>
               </tr>
             </thead>
             <tbody>
@@ -142,20 +144,21 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
           </DataTable>
           {v.aging.rows.length > 8 && (
             <p className="mt-2 text-xs text-muted-foreground">
-              + {v.aging.rows.length - 8} dalších institucí · <DrillLink req={{ metric: 'receivables' }}>všechny pohledávky</DrillLink>
+              {t('pages.money.moreInstitutions', { count: v.aging.rows.length - 8 })}{' '}
+              <DrillLink req={{ metric: 'receivables' }}>{t('pages.money.allReceivables')}</DrillLink>
             </p>
           )}
         </Section>
 
-        <Section className="xl:col-span-2" title="DSO po měsících" description="Průměrná doba od vystavení po úhradu faktury">
+        <Section className="xl:col-span-2" title={t('pages.money.dso')} description={t('pages.money.dsoDesc')}>
           <DsoChart data={v.dso} term={PAYMENT_TERM_DAYS} height={250} />
         </Section>
       </div>
 
       <div className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-2">
-        <Section title="Tržby a hrubá marže podle produktu" description={`Vyhrané dealy v období ${ctx.period.label}`}>
+        <Section title={t('pages.money.products')} description={t('pages.money.productsDesc', { period: ctx.period.label })}>
           {v.products.every((p) => p.revenue === 0) ? (
-            <EmptyState title="V období nejsou vyhrané dealy" />
+            <EmptyState title={t('pages.money.noWon')} />
           ) : (
             <div className="flex flex-col gap-2.5">
               {(() => {
@@ -163,11 +166,11 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
                 return v.products.map((p) => (
                   <DrillButton
                     key={p.productId}
-                    req={{ metric: 'product', filters: { productId: p.productId }, title: `Prodáno · ${p.name}` }}
+                    req={{ metric: 'product', filters: { productId: p.productId }, title: t('pages.money.soldTitle', { name: term('product', p.productId) }) }}
                     className="group grid grid-cols-[minmax(0,10rem)_1fr_5.5rem] items-center gap-3 text-[13px]"
                   >
-                    <span className="truncate group-hover:underline" title={p.name}>
-                      {p.shortName}
+                    <span className="truncate group-hover:underline" title={term('product', p.productId)}>
+                      {term('productShort', p.productId)}
                     </span>
                     <span className="relative h-5 rounded-[4px] bg-muted/60">
                       <span className="absolute inset-y-0 left-0 rounded-[4px] bg-chart-1" style={{ width: `${(p.revenue / max) * 100}%` }} />
@@ -179,7 +182,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
                     <span className="tabular text-right">
                       <span className="font-medium">{formatCZKCompact(p.revenue)}</span>
                       <span className="block text-[11px] text-muted-foreground">
-                        marže {p.margin === null ? '—' : formatPercent(p.margin, 0)}
+                        {t('pages.money.margin', { pct: p.margin === null ? '—' : formatPercent(p.margin, 0) })}
                       </span>
                     </span>
                   </DrillButton>
@@ -188,8 +191,8 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
               <Legend
                 className="mt-1"
                 items={[
-                  { label: 'Tržba', color: 'var(--chart-1)' },
-                  { label: 'Hrubá marže v Kč', color: 'var(--chart-3)' },
+                  { label: t('pages.money.revenue'), color: 'var(--chart-1)' },
+                  { label: t('pages.money.marginValue'), color: 'var(--chart-3)' },
                 ]}
               />
             </div>
@@ -197,11 +200,11 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
         </Section>
 
         <Section
-          title="Nespárované platby"
-          description={`Platby bez faktury a nejpravděpodobnější kandidát podle částky · ručně spárováno za ${v.trailingMonths} měsíců: ${v.manualLastYear}`}
+          title={t('pages.money.unmatched')}
+          description={t('pages.money.unmatchedDesc', { months: v.trailingMonths, count: v.manualLastYear })}
         >
           {v.unmatched.length === 0 ? (
-            <EmptyState title="Všechny platby jsou spárované" />
+            <EmptyState title={t('pages.money.allMatched')} />
           ) : (
             <div className="flex flex-col gap-2">
               {v.unmatched.map((u) => (
@@ -223,18 +226,18 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
                       <>
                         <span className="block font-medium">→ {u.candidate.number}</span>
                         <span className="block text-muted-foreground">
-                          VS {u.candidate.vs} · shoda částky{u.alternatives ? ` (+${u.alternatives} další)` : ''}
+                          {t('pages.money.amountMatch', { vs: u.candidate.vs })}
+                          {u.alternatives ? t('pages.money.alternatives', { count: u.alternatives }) : ''}
                         </span>
                       </>
                     ) : (
-                      <Pill tone="warning">bez kandidáta</Pill>
+                      <Pill tone="warning">{t('pages.money.noCandidate')}</Pill>
                     )}
                   </span>
                 </DrillButton>
               ))}
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Faktura kandidáta se v systému tváří jako nezaplacená, a proto může strašit v pohledávkách po splatnosti.
-                Po ručním spárování zmizí z upomínek.
+                {t('pages.money.unmatchedNote')}
               </p>
             </div>
           )}

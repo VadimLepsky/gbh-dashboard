@@ -1,4 +1,3 @@
-import { formatCZKCompact, formatPercent } from '../../format'
 import type { MetricContext } from '../context'
 import { exceptions } from '../exceptions'
 import { funnel } from '../conversion'
@@ -46,7 +45,9 @@ export function teamView(ctx: MetricContext) {
 }
 
 export function repView(ctx: MetricContext, repId: string) {
-  const { ds, full, period, compare, cmpMode } = ctx
+  const { ds, full, period, compare, cmpMode, i18n } = ctx
+  const { t, tn } = i18n
+  const { formatCZKCompact, formatPercent, formatNumber } = i18n.f
   const rep = ds.salespeople.find((s) => s.id === repId)
   if (!rep) return null
   const f = { ownerId: rep.id }
@@ -54,8 +55,8 @@ export function repView(ctx: MetricContext, repId: string) {
   const fc = forecast(ds, period, f)
   const open = openDeals(ds, f)
   const endYm = chartEndMonth(period, ds.today)
-  const cmpLabel = compareLabel(cmpMode, compare)
-  const prevLabel = compareLabel('prev', compare)
+  const cmpLabel = compareLabel(cmpMode, compare, i18n)
+  const prevLabel = compareLabel('prev', compare, i18n)
   const elapsedCmp = { start: compare.start, end: compare.asOf }
   const weekly = weeklyActivities(ds, rep.id, 13)
 
@@ -63,30 +64,31 @@ export function repView(ctx: MetricContext, repId: string) {
     rep,
     row,
     kpis: [
-      makeKpi('revenue_won', row.won, cmpMode === 'plan' ? row.plan : revenueWon(ds, compare, f), cmpLabel, { metric: 'revenue_won', filters: f }, {
-        progress: { value: row.won, target: row.plan, label: `${formatPercent(row.attainment ?? 0, 0)} z plánu ${formatCZKCompact(row.plan)}` },
+      makeKpi(i18n, 'revenue_won', row.won, cmpMode === 'plan' ? row.plan : revenueWon(ds, compare, f), cmpLabel, { metric: 'revenue_won', filters: f }, {
+        progress: { value: row.won, target: row.plan, label: t('views.ofPlan', { pct: formatPercent(row.attainment ?? 0, 0), plan: formatCZKCompact(row.plan) }) },
       }),
-      makeKpi('weighted_forecast', fc.total, fc.plan, 'vs. plán', { metric: 'weighted_forecast', filters: f }, {
-        progress: { value: fc.won, extra: fc.weighted, target: fc.plan, label: `vážená pipeline ${formatCZKCompact(fc.weighted)}` },
+      makeKpi(i18n, 'weighted_forecast', fc.total, fc.plan, t('compare.vsPlan'), { metric: 'weighted_forecast', filters: f }, {
+        progress: { value: fc.won, extra: fc.weighted, target: fc.plan, label: t('views.weightedPipeline', { value: formatCZKCompact(fc.weighted) }) },
       }),
-      makeKpi('pipeline', sum(open, (d) => d.value), null, `${open.length} otevřených dealů · vážená ${formatCZKCompact(sum(open, weightedValue))}`, { metric: 'pipeline', filters: f }),
-      makeKpi('win_rate', winRate(ds, period, f), winRate(ds, compare, f), prevLabel, { metric: 'win_rate', filters: f }),
+      makeKpi(i18n, 'pipeline', sum(open, (d) => d.value), null, `${tn('drill.count.openDeals', open.length)} · ${t('views.weighted', { value: formatCZKCompact(sum(open, weightedValue)) })}`, { metric: 'pipeline', filters: f }),
+      makeKpi(i18n, 'win_rate', winRate(ds, period, f), winRate(ds, compare, f), prevLabel, { metric: 'win_rate', filters: f }),
       makeKpi(
+        i18n,
         'activities_done',
         row.activityRatio,
         (() => {
-          const t = activityTarget(ds, elapsedCmp, f)
-          return t ? activitiesDone(ds, elapsedCmp, f).length / t : null
+          const target = activityTarget(ds, elapsedCmp, f)
+          return target ? activitiesDone(ds, elapsedCmp, f).length / target : null
         })(),
         prevLabel,
         { metric: 'activities_done', filters: f },
-        { note: `${row.activities} z ${Math.round(row.activityTarget)} aktivit` },
+        { note: t('views.activitiesOf', { done: formatNumber(row.activities), target: formatNumber(row.activityTarget) }) },
       ),
     ],
     sales: salesVsPlan(ds, endYm, 12, f),
     weekly: weekly.map((w) => ({ label: w.week, value: w.count })),
     weeklyTarget: (rep.monthlyActivityTarget * 7) / 30.4,
-    funnel: funnel(ds, period, f),
-    exceptions: exceptions(ds, full).filter((e) => e.ownerId === rep.id),
+    funnel: funnel(ds, period, f, i18n),
+    exceptions: exceptions(ds, full, i18n).filter((e) => e.ownerId === rep.id),
   }
 }

@@ -1,49 +1,48 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
 import { diffDays } from '@/lib/data/dates'
-import { formatCZK, formatDateShort, formatMonthShort, formatNumber, formatPercent } from '@/lib/format'
 import type { RepRow } from '@/lib/metrics/team'
 import type { Heat } from '@/lib/metrics/views/team'
-import { withState } from '@/lib/query'
 import { DrillButton } from '@/components/drill/drill-trigger'
 import { MiniBars } from '@/components/charts/sparkline'
 import { Avatar, ProgressBar } from './primitives'
 import { DataTable, Td, Th } from './table'
 import { MetricLabel } from './info-tip'
+import { useHref, useI18n } from '@/components/i18n-provider'
 
 type Row = RepRow & {
   heat: { pace: Heat; activity: Heat; overdue: Heat; noNext: Heat; stuck: Heat }
 }
 
-const TEAM_NAME: Record<string, string> = { cechy: 'Čechy', morava: 'Morava' }
-
 export function TeamTable({ rows, today, isCurrent }: { rows: Row[]; today: string; isCurrent: boolean }) {
+  const { t, term, f: fmt } = useI18n()
+  const { formatCZK, formatDateShort, formatMonthShort, formatNumber, formatPercent } = fmt
+  const href = useHref()
   const router = useRouter()
-  const params = useSearchParams()
   return (
     <DataTable minWidth={900}>
       <thead>
         <tr>
-          <Th>Obchodník</Th>
+          <Th>{t('ui.team.rep')}</Th>
           <Th>
             <MetricLabel id="attainment" />
           </Th>
           <Th align="right">
-            <MetricLabel id="activities_done" label="Aktivity" />
+            <MetricLabel id="activities_done" label={t('ui.team.activities')} />
           </Th>
           <Th align="right">
-            <MetricLabel id="overdue_followups" label="Zpožd. FU" />
+            <MetricLabel id="overdue_followups" label={t('ui.team.overdueFu')} />
           </Th>
           <Th align="right">
-            <MetricLabel id="no_next_step" label="Bez kroku" />
+            <MetricLabel id="no_next_step" label={t('ui.team.noStep')} />
           </Th>
           <Th align="right">
-            <MetricLabel id="stuck_deals" label="Zaseknuté" />
+            <MetricLabel id="stuck_deals" label={t('ui.team.stuck')} />
           </Th>
-          <Th align="right">Posl. akt.</Th>
-          <Th>Trend {Math.max(0, (rows[0]?.trend.length ?? 1) - 1)} měs.</Th>
+          <Th align="right">{t('ui.team.lastActivity')}</Th>
+          <Th>{t('ui.team.trend', { months: Math.max(0, (rows[0]?.trend.length ?? 1) - 1) })}</Th>
           <Th />
         </tr>
       </thead>
@@ -54,7 +53,7 @@ export function TeamTable({ rows, today, isCurrent }: { rows: Row[]; today: stri
           return (
             <tr
               key={r.rep.id}
-              onClick={() => router.push(withState(`/tym/${r.rep.id}`, params))}
+              onClick={() => router.push(href(`/tym/${r.rep.id}`))}
               className="group cursor-pointer transition-colors hover:bg-muted/40"
             >
               <Td>
@@ -63,7 +62,7 @@ export function TeamTable({ rows, today, isCurrent }: { rows: Row[]; today: stri
                   <span className="min-w-0">
                     <span className="block font-medium whitespace-nowrap group-hover:underline">{r.rep.name}</span>
                     <span className="block text-xs whitespace-nowrap text-muted-foreground">
-                      {r.rep.role} · {TEAM_NAME[r.rep.teamId]}
+                      {term('role', r.rep.role)} · {term('team', r.rep.teamId)}
                     </span>
                   </span>
                 </span>
@@ -107,10 +106,10 @@ export function TeamTable({ rows, today, isCurrent }: { rows: Row[]; today: stri
                 </DrillButton>
               </Td>
               <Td align="right" className="text-muted-foreground">
-                {r.lastActivity ? (lastAgo === 0 ? 'dnes' : formatDateShort(r.lastActivity)) : '—'}
+                {r.lastActivity ? (lastAgo === 0 ? t('ui.team.today') : formatDateShort(r.lastActivity)) : '—'}
               </Td>
               <Td>
-                <MiniBars values={r.trend.map((t) => ({ label: formatMonthShort(t.ym), value: t.value }))} />
+                <MiniBars values={r.trend.map((p) => ({ label: formatMonthShort(p.ym), value: p.value }))} />
               </Td>
               <Td className="w-6 text-muted-foreground">
                 <ChevronRight className="size-4 opacity-40 group-hover:opacity-100" />

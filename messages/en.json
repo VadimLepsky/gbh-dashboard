@@ -1,0 +1,1124 @@
+{
+  "format": {
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "pointsUnit": "pp"
+  },
+  "units": {
+    "days": {
+      "one": "day",
+      "other": "days"
+    },
+    "deals": {
+      "one": "deal",
+      "other": "deals"
+    },
+    "invoices": {
+      "one": "invoice",
+      "other": "invoices"
+    },
+    "followups": {
+      "one": "follow-up",
+      "other": "follow-ups"
+    },
+    "dealsGen": {
+      "one": "deal",
+      "other": "deals"
+    },
+    "items": {
+      "one": "item",
+      "other": "items"
+    },
+    "reps": {
+      "one": "rep",
+      "other": "reps"
+    },
+    "payments": {
+      "one": "payment",
+      "other": "payments"
+    }
+  },
+  "metrics": {
+    "revenue_won": {
+      "label": "Sold",
+      "definition": "Value of deals closed as won in the period.",
+      "formula": "Σ value of deals in stage Won with close date in the period"
+    },
+    "invoiced": {
+      "label": "Invoiced",
+      "definition": "Total of invoices issued in the period.",
+      "formula": "Σ amount of invoices with issue date in the period"
+    },
+    "collected": {
+      "label": "Collected",
+      "definition": "Money that actually arrived in the bank for invoices in the period.",
+      "formula": "Σ amount of invoices with payment date in the period"
+    },
+    "receivables": {
+      "label": "Receivables",
+      "definition": "Issued invoices that were still unpaid at the end of the period.",
+      "formula": "Σ unpaid invoices at the end of the period"
+    },
+    "overdue": {
+      "label": "Overdue",
+      "definition": "Unpaid invoices that are past their due date.",
+      "formula": "Σ unpaid invoices with due date before the end of the period"
+    },
+    "dso": {
+      "label": "DSO",
+      "definition": "Average number of days from issuing an invoice to its payment.",
+      "formula": "average (payment date − issue date) for invoices paid in the period"
+    },
+    "pipeline": {
+      "label": "Pipeline",
+      "definition": "Total value of all open deals.",
+      "formula": "Σ value of open deals"
+    },
+    "weighted_forecast": {
+      "label": "Weighted forecast",
+      "definition": "Sales estimate for the period: what is already won plus open deals weighted by the probability of their stage.",
+      "formula": "won in the period + Σ value × stage probability of open deals expected to close in the period"
+    },
+    "plan": {
+      "label": "Plan",
+      "definition": "Sales target for the selected team and period.",
+      "formula": "Σ monthly quota of reps × share of each month in the period"
+    },
+    "attainment": {
+      "label": "Plan attainment",
+      "definition": "How much of the plan is already sold.",
+      "formula": "Sold / Plan"
+    },
+    "coverage": {
+      "label": "Pipeline coverage",
+      "definition": "How many times the open pipeline closing in the period covers the part of the plan that is still missing.",
+      "formula": "pipeline expected to close in the period / (Plan − Sold)"
+    },
+    "win_rate": {
+      "label": "Win rate",
+      "definition": "Share of won deals among all deals closed in the period.",
+      "formula": "won / (won + lost), closed in the period"
+    },
+    "cycle_days": {
+      "label": "Sales cycle",
+      "definition": "Typical time from creating a deal to winning it.",
+      "formula": "median days from creation to close for won deals"
+    },
+    "avg_deal": {
+      "label": "Average deal",
+      "definition": "Average value of one won deal.",
+      "formula": "Sold / number of won deals"
+    },
+    "gross_margin": {
+      "label": "Gross margin",
+      "definition": "How much of sales remains after direct costs (trainers, travel, materials).",
+      "formula": "(revenue − costs by product) / revenue"
+    },
+    "activities_done": {
+      "label": "Activities done",
+      "definition": "How many calls, e-mails, meetings and follow-ups reps completed in the period against the target.",
+      "formula": "activities completed in the period / activity target for the period"
+    },
+    "overdue_followups": {
+      "label": "Overdue follow-ups",
+      "definition": "Scheduled activities whose due date has passed and nobody did them.",
+      "formula": "activities due before today with no completion date"
+    },
+    "no_next_step": {
+      "label": "No next step",
+      "definition": "Open deals with no next step scheduled, or with one in the past.",
+      "formula": "open deals with next step = empty or before today"
+    },
+    "stuck_deals": {
+      "label": "Stuck deals",
+      "definition": "Open deals that have been in their current stage much longer than usual.",
+      "formula": "days in current stage > {factor} × median of the stage (public tenders compared separately)"
+    },
+    "commission_payable": {
+      "label": "Commission payable",
+      "definition": "Commission from invoices the client paid in the period. Commission is earned when the invoice is paid.",
+      "formula": "Σ paid revenue × base rate × KPI coefficient of the payment month"
+    },
+    "commission_pending": {
+      "label": "Commission pending",
+      "definition": "Commission from won deals that are not paid yet (not invoiced or unpaid).",
+      "formula": "Σ (not invoiced + unpaid amount) × base rate × current KPI coefficient"
+    },
+    "renewal_rate": {
+      "label": "Renewal rate",
+      "definition": "Share of annual contracts that ended in the last {months} months and were renewed.",
+      "formula": "renewed contracts / contracts ending in the last {months} months"
+    },
+    "tender_win_rate": {
+      "label": "Tender win rate",
+      "definition": "Share of won public tenders among all decided ones.",
+      "formula": "won / (won + lost) tenders"
+    },
+    "unmatched_payments": {
+      "label": "Unmatched payments",
+      "definition": "Bank payments that cannot be matched to an invoice automatically (wrong variable symbol).",
+      "formula": "number of bank payments with no matched invoice"
+    }
+  },
+  "period": {
+    "year": "Year {year}",
+    "yearLower": "{year}",
+    "presets": {
+      "thisMonth": "This month",
+      "lastMonth": "Last month",
+      "quarter": "Quarter",
+      "year": "Year"
+    }
+  },
+  "compare": {
+    "vsPlan": "vs. plan",
+    "vs": "vs. {label}",
+    "options": {
+      "prev": "vs. previous period",
+      "plan": "vs. plan",
+      "yoy": "vs. last year"
+    }
+  },
+  "viewAs": {
+    "reditel": {
+      "label": "Sales director",
+      "short": "Whole company"
+    },
+    "morava": {
+      "label": "Team lead Moravia",
+      "short": "Team Moravia"
+    },
+    "novak": {
+      "label": "Jakub Novák (sales rep)",
+      "short": "Own data only"
+    }
+  },
+  "terms": {
+    "stage": {
+      "Kontakt": "Contact",
+      "Kvalifikace": "Qualification",
+      "Nabídka": "Proposal",
+      "Vyjednávání": "Negotiation",
+      "Smlouva k podpisu": "Contract for signature",
+      "Vyhráno": "Won",
+      "Prohráno": "Lost"
+    },
+    "lostReason": {
+      "Cena": "Price",
+      "Rozpočet zmrazen": "Budget frozen",
+      "Vybrán konkurent": "Competitor chosen",
+      "Bez odezvy": "No response",
+      "Zrušená zakázka": "Tender cancelled"
+    },
+    "source": {
+      "cold_call": "Cold call",
+      "webinar": "Webinar",
+      "referral": "Referral",
+      "tender": "Public tender",
+      "inbound": "Web / inbound",
+      "fair": "Trade fair"
+    },
+    "product": {
+      "kyber": "Cybersecurity for employees",
+      "krize": "Crisis management and evacuation",
+      "objekty": "Protection of premises and people",
+      "utocnik": "Active shooter response",
+      "management": "Security management for leaders",
+      "ramcova": "Annual framework contract"
+    },
+    "productShort": {
+      "kyber": "Cybersecurity",
+      "krize": "Crisis management",
+      "objekty": "Premises protection",
+      "utocnik": "Active shooter",
+      "management": "Management",
+      "ramcova": "Framework contract"
+    },
+    "tenderTitle": {
+      "Kybernetická bezpečnost pro zaměstnance": "Cybersecurity for employees",
+      "Krizové řízení a evakuace": "Crisis management and evacuation",
+      "Ochrana objektů a osob": "Protection of premises and people",
+      "Útok aktivního útočníka": "Active shooter response",
+      "Bezpečnostní management pro vedoucí": "Security management for leaders",
+      "Roční rámcová smlouva": "Annual framework contract"
+    },
+    "role": {
+      "Senior": "Senior",
+      "Obchodník": "Account executive",
+      "Junior": "Junior"
+    },
+    "institutionType": {
+      "Ministerstvo": "Ministry",
+      "Krajský úřad": "Regional authority",
+      "Městský úřad": "Municipal office",
+      "Nemocnice": "Hospital",
+      "Škola": "School",
+      "Složka IZS": "Emergency service",
+      "Státní podnik": "State enterprise"
+    },
+    "activity": {
+      "hovor": "Call",
+      "e-mail": "E-mail",
+      "schůzka": "Meeting",
+      "follow-up": "Follow-up"
+    },
+    "tenderStatus": {
+      "příprava": "preparation",
+      "podáno": "submitted",
+      "vyhráno": "won",
+      "prohráno": "lost"
+    },
+    "renewalStatus": {
+      "bez-obnovy": "No renewal",
+      "v-jednani": "In negotiation",
+      "obnoveno": "Renewed",
+      "ztraceno": "Lost"
+    },
+    "nextStep": {
+      "Kvalifikační hovor": "Qualification call",
+      "Zjistit odpovědnou osobu": "Find the decision maker",
+      "Úvodní schůzka": "Intro meeting",
+      "Schůzka s vedením": "Meeting with management",
+      "Ověřit rozpočet": "Confirm the budget",
+      "Analýza potřeb": "Needs analysis",
+      "Odeslat nabídku": "Send the proposal",
+      "Prezentace nabídky": "Present the proposal",
+      "Doplnit referenční list": "Add a reference list",
+      "Jednání o ceně": "Price negotiation",
+      "Upravit rozsah školení": "Adjust the training scope",
+      "Schůzka s ekonomem": "Meeting with finance",
+      "Připomínky ke smlouvě": "Contract comments",
+      "Urgovat podpis": "Chase the signature",
+      "Ověřit podpisové právo": "Verify signing authority",
+      "Dokončit nabídku do VZ": "Finish the tender bid"
+    },
+    "team": {
+      "cechy": "Bohemia",
+      "morava": "Moravia"
+    }
+  },
+  "exceptions": {
+    "types": {
+      "overdue_invoice": "Overdue invoice",
+      "stuck_deal": "Stuck deal",
+      "no_next_step": "No next step",
+      "overdue_followups": "Overdue follow-ups",
+      "unsigned_contract": "Unsigned contract",
+      "renewal_risk": "Renewal without a deal",
+      "tender_deadline": "Tender deadline",
+      "low_activity": "Low activity",
+      "unmatched_payment": "Unmatched payment"
+    },
+    "rules": {
+      "overdue_invoice": "Invoice more than {days} days overdue",
+      "stuck_deal": "Stuck deal: in its stage longer than {factor}× the median",
+      "no_next_step": "Open deal with no next step, or with one in the past",
+      "overdue_followups": "Rep with {min} or more overdue follow-ups",
+      "unsigned_contract": "Contract unsigned for more than {days} days",
+      "renewal_risk": "Annual contract ends within {days} days and no renewal deal is open",
+      "tender_deadline": "Public tender due within {days} days, still in preparation",
+      "low_activity": "Rep below {pct} of the activity target over {weeks} weeks",
+      "unmatched_payment": "Bank payment with no matched invoice"
+    },
+    "detail": {
+      "overdueInvoice": "{late} overdue (due {due})",
+      "stuck": "{days} in {stage} (usually {typical})",
+      "nextStepWas": "Next step was due {date} · {stage}",
+      "noStep": "No step scheduled · {stage}",
+      "followups": "Oldest from {date}, covers {deals}",
+      "unsigned": "Sent for signature {date} ({days})",
+      "renewalObject": "{institution} · framework contract",
+      "renewal": "Ends {date} (in {days}), no renewal opened",
+      "tender": "Submission by {date} (in {days}), still in preparation",
+      "lowActivity": "{done} of {target} activities in {weeks} weeks ({pct} of target)",
+      "paymentObject": "Payment {date} · VS {vs}",
+      "paymentCandidate": "Probably {invoice} ({institution}), amount matches",
+      "paymentNoCandidate": "Payer: {payer}, no invoice with the same amount"
+    },
+    "action": {
+      "invoiceCollect": "Hand over to collections, inform the client's management",
+      "invoiceRemind": "Send a reminder and call the client's accounts department",
+      "stuck": {
+        "Kontakt": "Confirm interest or close the deal as lost",
+        "Kvalifikace": "Book a meeting with the decision maker",
+        "Nabídka": "Call about the proposal, find out the objections",
+        "Vyjednávání": "Escalate: team lead meets the client",
+        "Smlouva k podpisu": "Chase the signature with the statutory signatory"
+      },
+      "planStep": "Schedule the next step with the client",
+      "followups": "Finish overdue follow-ups today, reschedule the rest",
+      "unsigned": "Chase the signature, verify signing authority",
+      "renewal": "Open a renewal deal and book a meeting",
+      "tender": "Finish the bid and have it reviewed",
+      "lowActivity": "1:1 with the team lead, weekly activity plan",
+      "paymentMatch": "Match with {invoice} and cancel the reminder",
+      "paymentTrace": "Trace the payer or return the payment"
+    },
+    "tags": {
+      "over30": "30+ days",
+      "stepPast": "step in the past",
+      "noStep": "no next step",
+      "closePassed": "close date passed",
+      "followups6": "6+ overdue",
+      "within30": "within 30 days"
+    }
+  },
+  "conversion": {
+    "window": "last {days} days ({from} – {to})"
+  },
+  "leaks": {
+    "actions": {
+      "Kontakt": {
+        "Bez odezvy": "Tighten lead qualification and use a sequence of 3 touches within 10 days.",
+        "default": "Review the lead source with marketing, adjust targeting and the first-call script."
+      },
+      "Kvalifikace": {
+        "Rozpočet zmrazen": "Confirm budget and spending timeline in the very first call (BANT).",
+        "default": "Add a qualification checklist: decision maker, budget, timeline."
+      },
+      "Nabídka": {
+        "Cena": "Offer two price options and a reference price from a similar office.",
+        "Vybrán konkurent": "Add a competitor comparison and regional references to every proposal.",
+        "default": "Review the proposal template with the team lead; follow up within 3 days of sending."
+      },
+      "Vyjednávání": {
+        "Cena": "Negotiation coaching; discounts approved by the team lead, trade scope rather than price.",
+        "Vybrán konkurent": "Team lead joins 2 meetings; strengthen the pitch with references.",
+        "default": "Weekly pipeline review of deals in negotiation."
+      },
+      "Smlouva k podpisu": {
+        "Rozpočet zmrazen": "Sign before quarter end and watch the client's budget measures.",
+        "default": "Shorten the signing path: e-signature and pre-agreed terms and conditions."
+      }
+    }
+  },
+  "aging": {
+    "current": "Not yet due",
+    "1-30": "1–30 days",
+    "31-60": "31–60 days",
+    "60+": "60+ days"
+  },
+  "chain": {
+    "won": "Won",
+    "signed": "Contract signed",
+    "invoiced": "Invoiced",
+    "paid": "Paid"
+  },
+  "reconcile": {
+    "won": {
+      "source": "Pipedrive",
+      "system": "CRM",
+      "label": "Won deals"
+    },
+    "invoices": {
+      "source": "iDoklad",
+      "system": "Invoicing",
+      "label": "Issued invoices"
+    },
+    "paid": {
+      "source": "iDoklad",
+      "system": "Invoicing",
+      "label": "Paid invoices"
+    },
+    "payments": {
+      "source": "Bank",
+      "system": "Bank API",
+      "label": "Matched payments"
+    }
+  },
+  "drill": {
+    "col": {
+      "deal": "Deal",
+      "owner": "Sales rep",
+      "value": "Value",
+      "closedAt": "Closed",
+      "lostAt": "At stage",
+      "reason": "Reason",
+      "outcome": "Outcome",
+      "stage": "Stage",
+      "expected": "Expected close",
+      "prob": "Prob.",
+      "weighted": "Weighted value",
+      "closeDate": "Close date",
+      "inStage": "Days in stage",
+      "nextStep": "Next step",
+      "invoice": "Invoice",
+      "institution": "Institution",
+      "issuedAt": "Issued",
+      "dueAt": "Due",
+      "paidAt": "Paid",
+      "late": "Delay",
+      "amount": "Amount",
+      "type": "Type",
+      "due": "Due",
+      "done": "Done",
+      "status": "Status",
+      "doc": "Invoice / deal",
+      "date": "Date",
+      "base": "Base",
+      "rateCoef": "Rate × coef.",
+      "commission": "Commission",
+      "daysToPay": "Days to pay",
+      "signed": "Signed",
+      "contract": "Contract",
+      "sent": "Sent",
+      "waiting": "Waiting",
+      "end": "End",
+      "renewal": "Renewal",
+      "annualValue": "Annual value",
+      "atRisk": "At risk",
+      "tender": "Tender",
+      "authority": "Contracting authority",
+      "submission": "Submission",
+      "receivedAt": "Received",
+      "payer": "Payer",
+      "vs": "VS",
+      "candidate": "Candidate",
+      "created": "Created",
+      "cycle": "Cycle"
+    },
+    "count": {
+      "deals": {
+        "one": "{count} deal",
+        "other": "{count} deals"
+      },
+      "openDeals": {
+        "one": "{count} open deal",
+        "other": "{count} open deals"
+      },
+      "closed": {
+        "one": "{count} closed ({won} won)",
+        "other": "{count} closed ({won} won)"
+      },
+      "weighted": {
+        "one": "{count} deal ({won} won, {open} open)",
+        "other": "{count} deals ({won} won, {open} open)"
+      },
+      "dealsWorth": {
+        "one": "{count} deal worth {value}",
+        "other": "{count} deals worth {value}"
+      },
+      "activities": {
+        "one": "{count} activity",
+        "other": "{count} activities"
+      },
+      "invoices": {
+        "one": "{count} invoice",
+        "other": "{count} invoices"
+      },
+      "paidInvoices": {
+        "one": "{count} paid invoice",
+        "other": "{count} paid invoices"
+      },
+      "items": {
+        "one": "{count} item",
+        "other": "{count} items"
+      },
+      "contracts": {
+        "one": "{count} contract",
+        "other": "{count} contracts"
+      },
+      "renewed": {
+        "one": "{count} contract ({renewed} renewed)",
+        "other": "{count} contracts ({renewed} renewed)"
+      },
+      "tenders": {
+        "one": "{count} tender",
+        "other": "{count} tenders"
+      },
+      "payments": {
+        "one": "{count} payment",
+        "other": "{count} payments"
+      },
+      "cohort": {
+        "one": "{count} deal left the stage ({advanced} advanced)",
+        "other": "{count} deals left the stage ({advanced} advanced)"
+      },
+      "wonDeals": {
+        "one": "{count} won deal",
+        "other": "{count} won deals"
+      },
+      "candidates": {
+        "one": "{count} candidate by amount",
+        "other": "{count} candidates by amount"
+      }
+    },
+    "text": {
+      "coldCall": "Cold call (new contact)",
+      "lineKind": {
+        "paid": "Payable",
+        "unpaid": "Awaiting payment",
+        "uninvoiced": "Awaiting invoice"
+      },
+      "amountMatch": "{invoice} (amount match)",
+      "lostTitle": "Lost · {reason}",
+      "lostAll": "Lost deals",
+      "lostTotal": "Lost value",
+      "pipelineStage": "Pipeline · {stage}",
+      "openToday": "open deals as of today",
+      "closingSoon": "Closing in the next {days} days",
+      "asOfToday": "as of today",
+      "count": "Count",
+      "lastWeeks": "last {weeks} weeks",
+      "activitiesNote": "Calls {calls} · e-mails {emails} · meetings {meetings} · follow-ups {followups}",
+      "receivablesOf": "Receivables · {label}",
+      "asOf": "as of {date}",
+      "total": "Total",
+      "commissionRep": "Commission · {name}",
+      "commissionAll": "Total commission (payable + pending)",
+      "commissionNote": "Commission is earned when the invoice is paid. KPI coefficient is based on plan attainment in the month of payment.",
+      "chain": "Chain · {step}",
+      "chainSubtitle": "deals won in {period}",
+      "unsignedTitle": "Contracts awaiting signature",
+      "unsignedSubtitle": "more than {days} days",
+      "renewalsTitle": "Renewals in the next {days} days",
+      "atRisk": "CZK at risk",
+      "renewalRateSubtitle": "contracts ending in the last {months} months",
+      "tendersStatus": "Public tenders · {status}",
+      "tendersActive": "Active public tenders",
+      "cohortTitle": "{stage} → next stage",
+      "conversion": "Conversion",
+      "advanced": "Advanced",
+      "median": "Median",
+      "unknown": "Unknown view"
+    },
+    "record": {
+      "invoiceNotFound": "Invoice not found",
+      "contractNotFound": "Contract not found",
+      "tenderNotFound": "Tender not found",
+      "paymentNotFound": "Payment not found",
+      "notFound": "Record not found",
+      "noAccess": "This record is outside your access",
+      "tender": "Public tender",
+      "submissionDeadline": "Submission deadline",
+      "tenderStatus": "Tender status",
+      "paymentTitle": "Payment {amount}",
+      "received": "received {date}",
+      "payer": "Payer",
+      "vs": "Variable symbol",
+      "status": "Status",
+      "matchedManual": "Matched manually",
+      "matchedAuto": "Matched automatically",
+      "unmatched": "Unmatched",
+      "likelyInvoice": "Most likely invoice",
+      "noCandidate": "none with the same amount",
+      "paymentNote": "The variable symbol differs by swapped digits; the amount matches exactly. Recommendation: match manually and cancel the reminder.",
+      "contractSent": "Contract {id} sent for signature",
+      "contractSigned": "Contract {id} signed",
+      "invoiceIssued": "Invoice {number} issued ({amount})",
+      "invoicePaid": "Invoice {number} paid",
+      "institution": "Institution",
+      "product": "Product",
+      "rep": "Sales rep",
+      "source": "Source",
+      "renewalSuffix": " · contract renewal",
+      "stage": "Stage",
+      "daysInStage": "{days} in stage",
+      "created": "Created",
+      "expectedClose": "Expected close",
+      "nextStep": "Next step",
+      "notScheduled": "not scheduled",
+      "probability": "Probability",
+      "closed": "Closed",
+      "closedValue": "{date} · cycle {cycle}",
+      "tenderValue": "{id} · submission {date} · {status}",
+      "unpaid": "Unpaid",
+      "dealValue": "Deal value",
+      "amount": "Amount"
+    },
+    "ui": {
+      "back": "Back",
+      "error": "The data could not be loaded. Please try again.",
+      "sum": "Total",
+      "truncated": "Showing {shown} of {total} records. Total and count include all of them.",
+      "empty": "No records for the selected period."
+    }
+  },
+  "views": {
+    "ofPlan": "{pct} of plan {plan}",
+    "gapToPlan": "{value} short of plan",
+    "abovePlan": "{value} above plan",
+    "lastMonths": "last {months} months",
+    "monthEnd": "as of each month end",
+    "pendingMore": "{value} more pending",
+    "paymentTerm": "invoice payment term {days}",
+    "weighted": "weighted {value}",
+    "planMet": "plan already met",
+    "coverageNote": "pipeline {pipeline} for the remaining {rest}",
+    "weightedPipeline": "weighted pipeline {value}",
+    "activitiesOf": "{done} of {target} activities"
+  },
+  "meta": {
+    "title": "GBH Defence · Sales dashboard",
+    "description": "Demo dashboard of the GBH Defence sales department: plan, pipeline, team discipline, money and commissions. All data is simulated."
+  },
+  "nav": {
+    "label": "Main navigation",
+    "menu": "Navigation",
+    "openMenu": "Open menu",
+    "groups": {
+      "sales": "Sales",
+      "money": "Money",
+      "reporting": "Reporting"
+    },
+    "items": {
+      "overview": "Overview",
+      "exceptions": "Needs attention",
+      "pipeline": "Pipeline & forecast",
+      "team": "Team discipline",
+      "conversion": "Conversion & leaks",
+      "contracts": "Contracts & tenders",
+      "money": "Money",
+      "commissions": "Commissions",
+      "report": "Weekly report",
+      "dictionary": "Metric dictionary"
+    }
+  },
+  "shell": {
+    "department": "Sales department",
+    "demo": "Demo",
+    "demoLong": "Demo · simulated data",
+    "sources": "Pipedrive · iDoklad · bank",
+    "updated": "Updated {date} {time} · Pipedrive · iDoklad · bank",
+    "themeLight": "Switch to light mode",
+    "themeDark": "Switch to dark mode",
+    "viewAs": "View as",
+    "viewAsNote": "{scope}: data is filtered before metrics are computed.",
+    "footer": "Demo version of a dashboard built for the GBH Defence sales department. All data is generated, institutions are fictional. Author: Vadim Lepsky ·",
+    "period": "Period",
+    "custom": "Custom…",
+    "customPeriod": "Custom period",
+    "from": "From",
+    "to": "To",
+    "apply": "Apply",
+    "compare": "Comparison",
+    "loading": "Loading",
+    "loadingDots": "Loading…",
+    "errorTitle": "Something went wrong",
+    "errorText": "The overview could not be computed. Please try again.",
+    "retry": "Reload",
+    "notFoundTitle": "Page not found",
+    "notFoundText": "The link may be outdated. All overviews are in the menu on the left.",
+    "backHome": "Back to overview"
+  },
+  "ui": {
+    "showRecords": "{label}: show records",
+    "definition": "Definition",
+    "deadline": {
+      "today": "today",
+      "tomorrow": "tomorrow",
+      "by": "by {date}"
+    },
+    "accounting": "accounts",
+    "dealList": {
+      "deal": "Deal",
+      "stage": "Stage",
+      "value": "Value",
+      "close": "Close",
+      "inStage": "In stage",
+      "nextStep": "Next step",
+      "usually": "usually {days}",
+      "noStep": "no step",
+      "more": "+ {count} more in detail"
+    },
+    "forecast": {
+      "won": "Won",
+      "weighted": "Weighted pipeline",
+      "plan": "Plan",
+      "title": "Forecast · {label}",
+      "tooltip": "Won {won} · weighted pipeline {weighted} · plan {plan}"
+    },
+    "funnel": {
+      "stage": "Stage",
+      "open": "Open deals",
+      "rate": "Conversion onward",
+      "avgDays": "Avg. days in stage",
+      "lost": "Lost",
+      "rateFor": "Conversion over {window}"
+    },
+    "map": {
+      "tooltip": "{name}: forecast {total}, {open}",
+      "less": "less",
+      "more": "more"
+    },
+    "team": {
+      "rep": "Sales rep",
+      "activities": "Activities",
+      "overdueFu": "Overdue FU",
+      "noStep": "No step",
+      "stuck": "Stuck",
+      "lastActivity": "Last act.",
+      "trend": "Trend {months} mo.",
+      "today": "today"
+    },
+    "exTable": {
+      "all": "All · {count}",
+      "allOwners": "All owners",
+      "noOwner": "No owner (accounts)",
+      "owner": "Owner",
+      "emptyTitle": "Nothing to do",
+      "emptyText": "No exceptions for the selected filter.",
+      "type": "Type",
+      "object": "Object",
+      "atRisk": "CZK at risk",
+      "nextStep": "Next step",
+      "deadline": "Deadline"
+    },
+    "repDetail": {
+      "monthly": "Monthly attainment",
+      "monthlyDesc": "Sold vs. personal plan, {months} months. Click a bar for the deals.",
+      "weekly": "Activities by week",
+      "weeklyDesc": "Calls, e-mails, meetings and follow-ups over the last {weeks} weeks",
+      "pipeline": "Rep pipeline",
+      "pipelineDesc": "Open deals today, conversion over {window}",
+      "exceptions": "Rep exceptions",
+      "exceptionsDesc": "{count} items to resolve",
+      "noExceptions": "No exceptions",
+      "noExceptionsText": "The rep's pipeline is in order."
+    },
+    "chart": {
+      "dsoLegend": "DSO (days to payment)",
+      "dsoTitle": "DSO · {month}",
+      "term": "Payment term",
+      "dsoFooter": "Click for paid invoices",
+      "won": "Sold",
+      "wonTitle": "Sold · {month}",
+      "weightedToMonthEnd": "Weighted pipeline to month end",
+      "weighted": "Weighted pipeline",
+      "plan": "Plan",
+      "lastYear": "Last year",
+      "salesFooter": "Attainment {pct} · click for deals",
+      "weeklyDone": "Activities done per week",
+      "weeklyTarget": "Weekly target",
+      "weekOf": "Week of {date}",
+      "activities": "Activities",
+      "target": "Target",
+      "termLegend": "Invoice payment term"
+    }
+  },
+  "pages": {
+    "overview": {
+      "kpiWon": "Sold vs. plan",
+      "kpiForecast": "Forecast for period end",
+      "salesTitle": "Sold vs. plan",
+      "salesDesc": "Last {months} months. Click a bar to see the deals of that month.",
+      "forecastTitle": "Forecast · {period}",
+      "forecastClosed": "The period is closed, forecast = actual.",
+      "forecastOpen": "Won deals + open deals weighted by stage probability.",
+      "ofPlan": "{pct} of plan",
+      "alreadyWon": "Already won",
+      "weighted": "Weighted pipeline",
+      "gap": "Short of plan",
+      "above": "Above plan",
+      "planMet": "plan met",
+      "inPipeline": "({value} in pipeline)",
+      "coverageHigh": "Coverage above 3× – the plan is realistic if deals in negotiation close.",
+      "coverageMid": "Coverage between 1.5× and 3× – without new deals the plan will be tight.",
+      "coverageLow": "Coverage below 1.5× – even the whole pipeline is not enough to meet the plan.",
+      "attention": "Needs attention",
+      "attentionDesc": "{count} worth {value} · sorted by CZK × urgency",
+      "fullList": "Full list",
+      "chainTitle": "From sale to cash",
+      "chainDesc": "Flows in {period}",
+      "ofPrev": "{pct} of previous step",
+      "lagNote": "Invoicing and payments lag behind sales: training is invoiced after signature and delivery, and state institutions typically pay {days} after the due date (median over a year)."
+    },
+    "pipeline": {
+      "description": "Will we hit the plan?",
+      "closingIn": "Closing within {days}",
+      "closingNote": "{count} expected to close",
+      "worth": "worth {value}",
+      "funnel": "Funnel by stage",
+      "funnelDesc": "Open deals today. Conversion and time in stage over {window}. Red = well below average.",
+      "byKraj": "Forecast by region",
+      "byKrajDesc": "Won + weighted pipeline in the period",
+      "byRep": "Weighted forecast vs. plan · reps",
+      "byRepDesc": "{period} · sorted by attainment",
+      "byTeam": "Forecast by team",
+      "soon": "Closing in the next {days} days",
+      "soonDesc": "What has to land for the forecast to hold",
+      "soonEmpty": "No deals closing within {days}",
+      "stuck": "Stuck deals",
+      "stuckDesc": "In stage longer than {factor}× the usual time, sorted by value",
+      "stuckEmpty": "No stuck deals"
+    },
+    "team": {
+      "description": "Who is working and who is falling behind",
+      "pace": "Plan attainment (pace)",
+      "ofTarget": "{done} of {target}",
+      "asOfToday": "as of today",
+      "openDeals": "open deals",
+      "longer": "longer than {factor}× the usual time",
+      "reps": "Sales reps",
+      "repsDesc": "{period} · tinted cells need attention · click a row for the rep detail, a number for its records",
+      "note": "Attainment = sold / plan for the whole period; the vertical tick in the bar shows where the rep should be today. Trend = attainment over the last {months} months and this month so far.",
+      "teams": "{a} vs. {b}",
+      "ofPlan": "{pct} of plan",
+      "sold": "Sold",
+      "plan": "Plan",
+      "forecast": "Weighted forecast",
+      "pipeline": "Pipeline",
+      "winRate": "Win rate",
+      "activities": "Activities vs. target",
+      "overdueFu": "Overdue follow-ups",
+      "noStepStuck": "No step / stuck"
+    },
+    "rep": {
+      "fallbackTitle": "Sales rep",
+      "back": "Team discipline",
+      "noAccess": "This rep is outside your access",
+      "noAccessText": "In the selected role you only see your team's data or your own.",
+      "description": "{role} · team {team} · since {date}",
+      "kpiWon": "Sold vs. plan",
+      "kpiForecast": "Forecast for period end",
+      "kpiActivities": "Activities vs. target"
+    },
+    "exceptions": {
+      "description": "A daily list of exceptions, not charts",
+      "open": "Open exceptions",
+      "asOfToday": "as of today",
+      "atRisk": "CZK at risk",
+      "sumAll": "total of all items",
+      "today": "Due today",
+      "topOwner": "Most at risk",
+      "list": "To-do list",
+      "listDesc": "Sorted by CZK at risk × deadline urgency. Click an object to open its detail.",
+      "rules": "Rules",
+      "rulesDesc": "When an item appears in the list"
+    },
+    "conversion": {
+      "description": "Where our money leaks",
+      "widened": "Conversion needs enough closed stages, so this page uses {window}.",
+      "matrix": "Stage conversion by lead source",
+      "matrixDesc": "Colour = difference from the stage average (green better, red worse). In brackets the number of deals that left the stage.",
+      "source": "Source",
+      "winRate": "Win rate",
+      "average": "Average",
+      "stageShort": {
+        "Kontakt": "Contact → Qual.",
+        "Kvalifikace": "Qual. → Proposal",
+        "Nabídka": "Proposal → Negot.",
+        "Vyjednávání": "Negot. → Contract",
+        "Smlouva k podpisu": "Contract → Won"
+      },
+      "leaks": "Top 5 leaks in CZK",
+      "leaksDesc": "Expected lost revenue against the stage's average conversion (deals that should have advanced × probability of the next stage) · recommended step by rules",
+      "noLeaks": "No significant leaks",
+      "noLeaksText": "The window has few closed stages, or all are close to average.",
+      "leakTitle": "Leak · {stage} × {label}",
+      "dimSource": "source",
+      "dimOwner": "sales rep",
+      "leakStats": "Conversion {rate} vs. average {avg} · {deals}",
+      "leakReason": " · most often “{reason}”",
+      "recommendation": "Recommendation:",
+      "owner": "Owner: {name}",
+      "lostByReason": "Lost deals by reason",
+      "lostValue": "Lost value {value}",
+      "cycleSource": "Cycle length by source",
+      "cycleType": "Cycle length by institution type",
+      "cycleDesc": "Median days from creation to win",
+      "wins": {
+        "one": "{count} win",
+        "other": "{count} wins"
+      },
+      "medianDays": "Median days",
+      "noData": "No data in the window"
+    },
+    "money": {
+      "description": "Sold → invoiced → paid",
+      "chain": "Chain from win to cash",
+      "chainDesc": "Deals won in {period} and where they are today",
+      "ofValue": "{pct} of value",
+      "waitingSignature": {
+        "one": "{count} contract awaiting signature for more than {days}",
+        "other": "{count} contracts awaiting signature for more than {days}"
+      },
+      "signedNotInvoiced": {
+        "one": "{count} signed contract without an invoice for more than {days}",
+        "other": "{count} signed contracts without an invoice for more than {days}"
+      },
+      "overdueInChain": {
+        "one": "{count} invoice from these deals is overdue",
+        "other": "{count} invoices from these deals are overdue"
+      },
+      "nothingStuck": "Nothing is stuck",
+      "aging": "Receivables aging",
+      "agingDesc": "Unpaid invoices as of {date} by days past due",
+      "institution": "Institution",
+      "total": "Total",
+      "moreInstitutions": "+ {count} more institutions ·",
+      "allReceivables": "all receivables",
+      "dso": "DSO by month",
+      "dsoDesc": "Average time from issuing an invoice to its payment",
+      "products": "Revenue and gross margin by product",
+      "productsDesc": "Deals won in {period}",
+      "noWon": "No won deals in the period",
+      "soldTitle": "Sold · {name}",
+      "margin": "margin {pct}",
+      "revenue": "Revenue",
+      "marginValue": "Gross margin in CZK",
+      "unmatched": "Unmatched payments",
+      "unmatchedDesc": "Payments without an invoice and the most likely candidate by amount · matched manually in {months} months: {count}",
+      "allMatched": "All payments are matched",
+      "amountMatch": "VS {vs} · amount matches",
+      "alternatives": " (+{count} more)",
+      "noCandidate": "no candidate",
+      "unmatchedNote": "The candidate invoice looks unpaid in the system, so it may show up among overdue receivables. Once matched manually it drops out of the reminders."
+    },
+    "commissions": {
+      "description": "Commission is earned when the invoice is paid",
+      "fromPaid": "from paid revenue {value}",
+      "paidLater": "paid out once invoices are paid",
+      "base": "commission base in the period",
+      "kpiPaid": "Paid revenue",
+      "byRep": "Commission by sales rep",
+      "byRepDesc": "{period} · click a name to see which invoices the commission comes from and what is still awaiting payment",
+      "rep": "Sales rep",
+      "paidRevenue": "Paid revenue",
+      "rate": "Rate",
+      "attainmentRunning": "Attainment (to date)",
+      "attainment": "Plan attainment",
+      "avgCoef": "Avg. coefficient",
+      "coef": "Coefficient",
+      "payable": "Payable",
+      "pending": "Pending",
+      "total": "Total",
+      "rule": "Rule",
+      "ruleDesc": "Same for the whole team",
+      "ruleText": "Commission is earned when the invoice is paid.",
+      "baseRate": "Base rate on paid revenue",
+      "coefTitle": "KPI coefficient by monthly plan attainment",
+      "explain": "Payable = paid revenue × rate × coefficient of the payment month. Pending = won but not yet paid amounts (not invoiced and unpaid) × rate × current coefficient. The running month is evaluated pro rata to today."
+    },
+    "contracts": {
+      "description": "Annual contract renewals and public tenders · as of today",
+      "renewalsWithin": "Renewals within {days}",
+      "atRiskOf": "at risk · {contracts}",
+      "renewedOf": "{renewed} of {ended} contracts over {months} months",
+      "activeTenders": "Active tenders",
+      "worth": "worth {value}",
+      "tenderStats": "{won} won, {lost} lost over {months} months",
+      "renewals": "Renewals in the next {days} days",
+      "renewalsDesc": "{label} over {months} months: {rate} · CZK at risk = annual value we are not sure of yet",
+      "noRenewals": "No contracts ending",
+      "institution": "Institution",
+      "today": "today",
+      "renewal": "Renewal",
+      "atRisk": "At risk",
+      "annual": "{owner} · annual {value}",
+      "daysShort": "{days} d",
+      "tenders": "Public tenders",
+      "tendersDesc": "Active tenders by submission deadline",
+      "noTenders": "No active tenders",
+      "tender": "Tender",
+      "authority": "Contracting authority",
+      "deadline": "Submission deadline",
+      "status": "Status",
+      "owner": "Owner",
+      "value": "Value",
+      "inDays": "in {days}",
+      "daysAgo": {
+        "one": "{count} day ago",
+        "other": "{count} days ago"
+      }
+    },
+    "report": {
+      "description": "Automatic e-mail for management",
+      "day": "every Monday",
+      "scheduled": "Scheduled: {day} {time} → {to}",
+      "scheduleNote": "The report uses the same metrics as the dashboard, for the past week.",
+      "sendTest": "Send test e-mail (disabled in the demo)",
+      "from": "From:",
+      "to": "To:",
+      "subject": "Weekly sales report · {range}",
+      "brand": "GBH Defence · Sales",
+      "week": "Week {range}",
+      "intro": "Hello, here is the overview of last week. The numbers come from the same source as the dashboard (Pipedrive, iDoklad, bank).",
+      "wonWeek": "Sold this week",
+      "vsPrevWeek": "{change} vs. previous week",
+      "collected": "Collected",
+      "invoiced": "Invoiced",
+      "overdueTotal": "overdue in total {value}",
+      "activities": "Team activities",
+      "activitiesSub": "{pct} of target · {deals}",
+      "newDeals": {
+        "one": "{count} new deal",
+        "other": "{count} new deals"
+      },
+      "monthPlan": "Plan attainment this month",
+      "monthNote": "Sold {won} of plan {plan} · weighted forecast for month end {forecast}",
+      "top5": "Top 5 things to resolve",
+      "best": "Best pace this month",
+      "worst": "Needs support",
+      "ofProrated": "{pct} of pro-rated plan",
+      "footer": "All numbers are in the dashboard, where each one can be clicked through to the specific deals and invoices. This e-mail is a demo, the data is simulated."
+    },
+    "dictionary": {
+      "description": "One definition for every number in the dashboard",
+      "check": "Data check",
+      "checkDesc": "Totals from the source systems next to the totals computed by the dashboard, over the whole history since {date}",
+      "allOk": "All reconciled",
+      "mismatch": "Mismatch",
+      "source": "Source",
+      "records": "Records",
+      "count": "Count",
+      "sourceSum": "Total in source",
+      "dashboardSum": "Total in dashboard",
+      "status": "Status",
+      "ok": "matches",
+      "notOk": "does not match",
+      "unmatched": "Unmatched payments",
+      "unmatchedSub": "worth {value} out of {total} in total",
+      "openDeals": "Open deals",
+      "openDealsSub": "not counted as sales, only as pipeline",
+      "lostDeals": "Lost deals",
+      "lostDealsSub": "basis for win rate and leak analysis",
+      "note": "Matched bank payments must equal paid invoices. A payment with a wrong variable symbol stays unmatched until accounts assign it manually, so it is tracked separately.",
+      "definitions": "Definitions",
+      "definitionsDesc": "The same definitions appear in the help next to every number (the ? icon)",
+      "metric": "Metric",
+      "definition": "Definition",
+      "formula": "Formula",
+      "unit": "Unit",
+      "good": "Good is",
+      "up": "↑ higher",
+      "down": "↓ lower",
+      "units": {
+        "czk": "CZK",
+        "czk_compact": "CZK",
+        "percent": "%",
+        "days": "days",
+        "int": "count",
+        "ratio": "multiple",
+        "date": "date",
+        "text": "text"
+      }
+    }
+  }
+}

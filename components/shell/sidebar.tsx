@@ -1,14 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { withState } from '@/lib/query'
+import { stripLocale } from '@/lib/i18n/config'
+import { useHref, useI18n } from '@/components/i18n-provider'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NAV_GROUPS, isActive } from './nav'
 import { RoleSwitcher } from './role-switcher'
 
 export function Brand() {
+  const { t } = useI18n()
   return (
     <div className="flex items-center gap-3">
       <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-[11px] font-bold tracking-wide text-primary-foreground">
@@ -16,44 +18,46 @@ export function Brand() {
       </div>
       <div className="min-w-0 leading-tight">
         <div className="truncate text-sm font-semibold">GBH Defence</div>
-        <div className="truncate text-xs text-muted-foreground">Obchodní oddělení</div>
+        <div className="truncate text-xs text-muted-foreground">{t('shell.department')}</div>
       </div>
     </div>
   )
 }
 
 export function DemoBadge({ className, compact = false }: { className?: string; compact?: boolean }) {
+  const { t } = useI18n()
   return (
     <span
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium whitespace-nowrap text-muted-foreground',
         className,
       )}
-      title="Demo · simulovaná data"
+      title={t('shell.demoLong')}
     >
       <span className="size-1.5 rounded-full bg-accent" aria-hidden />
       {compact ? (
         <>
-          <span className="sm:hidden">Demo</span>
-          <span className="hidden sm:inline">Demo · simulovaná data</span>
+          <span className="sm:hidden">{t('shell.demo')}</span>
+          <span className="hidden sm:inline">{t('shell.demoLong')}</span>
         </>
       ) : (
-        'Demo · simulovaná data'
+        t('shell.demoLong')
       )}
     </span>
   )
 }
 
 export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
-  const pathname = usePathname()
-  const params = useSearchParams()
+  const { t } = useI18n()
+  const href = useHref()
+  const pathname = stripLocale(usePathname()).path
   return (
-    <nav className="flex flex-col gap-5" aria-label="Hlavní navigace">
+    <nav className="flex flex-col gap-5" aria-label={t('nav.label')}>
       {NAV_GROUPS.map((group, gi) => (
         <div key={gi} className="flex flex-col gap-0.5">
-          {group.label && (
+          {group.id && (
             <div className="px-3 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground/80 uppercase">
-              {group.label}
+              {t(`nav.groups.${group.id}`)}
             </div>
           )}
           {group.items.map((item) => {
@@ -62,7 +66,7 @@ export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             return (
               <Link
                 key={item.href}
-                href={withState(item.href, params)}
+                href={href(item.href)}
                 onClick={onNavigate}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
@@ -73,7 +77,7 @@ export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
                 )}
               >
                 <Icon className={cn('size-4 shrink-0', active ? 'text-primary' : 'text-muted-foreground')} />
-                {item.label}
+                {t(`nav.items.${item.id}`)}
               </Link>
             )
           })}
@@ -84,6 +88,7 @@ export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 export function Sidebar() {
+  const { t } = useI18n()
   return (
     <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col border-r border-sidebar-border/60 bg-sidebar lg:flex">
       <div className="px-5 pt-5 pb-4">
@@ -96,7 +101,7 @@ export function Sidebar() {
       <div className="border-t border-sidebar-border/60 px-4 py-4">
         <RoleSwitcher />
         <div className="mt-3 flex items-center justify-between">
-          <span className="text-[11px] text-muted-foreground">Pipedrive · iDoklad · banka</span>
+          <span className="text-[11px] text-muted-foreground">{t('shell.sources')}</span>
           <ThemeToggle />
         </div>
       </div>

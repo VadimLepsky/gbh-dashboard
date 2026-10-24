@@ -1,4 +1,5 @@
 import type { ISODate } from '../data/types'
+import type { I18n } from '../i18n/core'
 import type { DrillRequest } from './drill-types'
 
 export type ExceptionType =
@@ -12,16 +13,9 @@ export type ExceptionType =
   | 'low_activity'
   | 'unmatched_payment'
 
-export const EXCEPTION_LABEL: Record<ExceptionType, string> = {
-  overdue_invoice: 'Faktura po splatnosti',
-  stuck_deal: 'Zaseknutý deal',
-  no_next_step: 'Bez dalšího kroku',
-  overdue_followups: 'Zpožděné follow-upy',
-  unsigned_contract: 'Nepodepsaná smlouva',
-  renewal_risk: 'Obnova bez dealu',
-  tender_deadline: 'Termín zakázky',
-  low_activity: 'Nízká aktivita',
-  unmatched_payment: 'Nespárovaná platba',
+/** Label of an exception type in the given language. */
+export function exceptionLabel(i18n: Pick<I18n, 't'>, type: ExceptionType): string {
+  return i18n.t(`exceptions.types.${type}`)
 }
 
 export interface ExceptionItem {
@@ -51,14 +45,29 @@ export const RULES = {
   unmatchedLookbackDays: 45,
 } as const
 
-export const RULE_TEXT: Record<ExceptionType, string> = {
-  overdue_invoice: `Faktura více než ${RULES.overdueInvoiceDays} dní po splatnosti`,
-  stuck_deal: `Zaseknutý deal: ve fázi déle než ${RULES.stuckFactor}× medián`,
-  no_next_step: 'Otevřený deal bez dalšího kroku nebo s krokem v minulosti',
-  overdue_followups: `Obchodník s ${RULES.followupsMin} a více zpožděnými follow-upy`,
-  unsigned_contract: `Smlouva nepodepsaná déle než ${RULES.unsignedDays} dní`,
-  renewal_risk: `Roční smlouva končí do ${RULES.renewalDays} dní a obnova není založená`,
-  tender_deadline: `Veřejná zakázka s termínem do ${RULES.tenderDays} dní ve stavu příprava`,
-  low_activity: `Obchodník pod ${Math.round(RULES.lowActivityRatio * 100)} % cíle aktivit za ${RULES.lowActivityWindowDays / 7} týdny`,
-  unmatched_payment: 'Platba na účtu bez spárované faktury',
+/** When an item appears in the list — one sentence per rule, thresholds filled from RULES. */
+export function ruleTexts(i18n: Pick<I18n, 't' | 'f'>): Record<ExceptionType, string> {
+  const types: ExceptionType[] = [
+    'overdue_invoice',
+    'stuck_deal',
+    'no_next_step',
+    'overdue_followups',
+    'unsigned_contract',
+    'renewal_risk',
+    'tender_deadline',
+    'low_activity',
+    'unmatched_payment',
+  ]
+  const vars: Record<ExceptionType, Record<string, string | number>> = {
+    overdue_invoice: { days: RULES.overdueInvoiceDays },
+    stuck_deal: { factor: RULES.stuckFactor },
+    no_next_step: {},
+    overdue_followups: { min: RULES.followupsMin },
+    unsigned_contract: { days: RULES.unsignedDays },
+    renewal_risk: { days: RULES.renewalDays },
+    tender_deadline: { days: RULES.tenderDays },
+    low_activity: { pct: i18n.f.formatPercent(RULES.lowActivityRatio, 0), weeks: RULES.lowActivityWindowDays / 7 },
+    unmatched_payment: {},
+  }
+  return Object.fromEntries(types.map((t) => [t, i18n.t(`exceptions.rules.${t}`, vars[t])])) as Record<ExceptionType, string>
 }

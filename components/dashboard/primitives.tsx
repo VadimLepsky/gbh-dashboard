@@ -1,6 +1,8 @@
+'use client'
+
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
-import { formatDecimal, formatNumber, formatSignedPercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/components/i18n-provider'
 
 /** White card with a heading, Square-style. */
 export function Section({
@@ -38,14 +40,6 @@ export function Section({
 
 export type DeltaKind = 'relative' | 'points' | 'absolute'
 
-export function formatDelta(delta: number, kind: DeltaKind, unit?: string): string {
-  if (kind === 'relative') return formatSignedPercent(delta)
-  const sign = delta > 0 ? '+' : delta < 0 ? '−' : ''
-  if (kind === 'points') return `${sign}${formatDecimal(Math.abs(delta) * 100)} p. b.`
-  const abs = Math.abs(delta)
-  return `${sign}${Number.isInteger(abs) ? formatNumber(abs) : formatDecimal(abs)}${unit ? ` ${unit}` : ''}`
-}
-
 /** Delta with ArrowUpRight/ArrowDownRight; colour follows meaning (good/bad), not direction. */
 export function Delta({
   delta,
@@ -59,9 +53,11 @@ export function Delta({
   kind?: DeltaKind
   good: boolean | null
   label?: string
+  /** Unit key from the dictionaries (`units.days` …) for absolute deltas. */
   unit?: string
   className?: string
 }) {
+  const { f } = useI18n()
   if (delta === null || !Number.isFinite(delta)) {
     return label ? <span className={cn('text-xs text-muted-foreground', className)}>{label}</span> : null
   }
@@ -71,7 +67,7 @@ export function Delta({
     <span className={cn('inline-flex items-center gap-1 text-xs', className)}>
       <span className={cn('inline-flex items-center gap-0.5 font-medium', tone)}>
         {Math.abs(delta) > 1e-9 && <Icon className="size-3.5" aria-hidden />}
-        <span className="tabular">{formatDelta(delta, kind, unit)}</span>
+        <span className="tabular">{f.formatDelta(delta, kind, unit)}</span>
       </span>
       {label && <span className="text-muted-foreground">{label}</span>}
     </span>

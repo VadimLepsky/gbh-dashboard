@@ -12,45 +12,47 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
+/** Labels: `nav.items.<id>` and `nav.groups.<group>` in the dictionaries. */
 export interface NavItem {
+  id: string
   href: string
-  label: string
   icon: LucideIcon
 }
 
-export const NAV_GROUPS: { label: string | null; items: NavItem[] }[] = [
+export const NAV_GROUPS: { id: string | null; items: NavItem[] }[] = [
   {
-    label: null,
+    id: null,
     items: [
-      { href: '/', label: 'Přehled', icon: House },
-      { href: '/vyjimky', label: 'Vyžaduje pozornost', icon: CircleAlert },
+      { id: 'overview', href: '/', icon: House },
+      { id: 'exceptions', href: '/vyjimky', icon: CircleAlert },
     ],
   },
   {
-    label: 'Obchod',
+    id: 'sales',
     items: [
-      { href: '/pipeline', label: 'Pipeline a prognóza', icon: Funnel },
-      { href: '/tym', label: 'Disciplína týmu', icon: Users },
-      { href: '/konverze', label: 'Konverze a úniky', icon: Droplets },
-      { href: '/smlouvy', label: 'Smlouvy a zakázky', icon: FileSignature },
+      { id: 'pipeline', href: '/pipeline', icon: Funnel },
+      { id: 'team', href: '/tym', icon: Users },
+      { id: 'conversion', href: '/konverze', icon: Droplets },
+      { id: 'contracts', href: '/smlouvy', icon: FileSignature },
     ],
   },
   {
-    label: 'Peníze',
+    id: 'money',
     items: [
-      { href: '/penize', label: 'Peníze', icon: Wallet },
-      { href: '/provize', label: 'Provize', icon: HandCoins },
+      { id: 'money', href: '/penize', icon: Wallet },
+      { id: 'commissions', href: '/provize', icon: HandCoins },
     ],
   },
   {
-    label: 'Reporting',
+    id: 'reporting',
     items: [
-      { href: '/report', label: 'Týdenní report', icon: Mail },
-      { href: '/slovnik', label: 'Slovník metrik', icon: BookOpen },
+      { id: 'report', href: '/report', icon: Mail },
+      { id: 'dictionary', href: '/slovnik', icon: BookOpen },
     ],
   },
 ]
 
+/** `pathname` without the language prefix. */
 export function isActive(pathname: string, href: string): boolean {
   return href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`)
 }

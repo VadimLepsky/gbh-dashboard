@@ -1,5 +1,6 @@
 import { addDays, startOfMonth, startOfWeek } from '../data/dates'
 import type { Dataset } from '../data/types'
+import { getI18n, type I18n } from '../i18n'
 import { exceptions, type ExceptionItem } from './exceptions'
 import { collected, invoiced, overdue } from './money'
 import { monthPeriod } from './period'
@@ -28,12 +29,12 @@ export interface WeeklyReport {
 }
 
 /** Report for the last completed week (Monday–Sunday). */
-export function weeklyReport(ds: Dataset, full: Dataset = ds): WeeklyReport {
+export function weeklyReport(ds: Dataset, full: Dataset = ds, i18n: I18n = getI18n()): WeeklyReport {
   const weekStart = addDays(startOfWeek(ds.today), -7)
   const weekEnd = addDays(weekStart, 6)
   const prev = { start: addDays(weekStart, -7), end: addDays(weekStart, -1) }
   const week = { start: weekStart, end: weekEnd }
-  const month = monthPeriod(ds.today.slice(0, 7), ds.today)
+  const month = monthPeriod(ds.today.slice(0, 7), ds.today, i18n)
   const fc = forecast(ds, month)
   const mtd = { start: startOfMonth(ds.today), end: ds.today }
 
@@ -61,7 +62,7 @@ export function weeklyReport(ds: Dataset, full: Dataset = ds): WeeklyReport {
     monthPlan: fc.plan,
     monthForecast: fc.total,
     overdue: overdue(ds, ds.today),
-    topExceptions: exceptions(ds, full).slice(0, 5),
+    topExceptions: exceptions(ds, full, i18n).slice(0, 5),
     best: paces.length > 1 ? paces[0] : null,
     worst: paces.length > 1 ? paces[paces.length - 1] : null,
   }

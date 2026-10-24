@@ -1,13 +1,14 @@
 'use client'
 
 import { CircleHelp } from 'lucide-react'
-import { METRICS, type MetricId } from '@/lib/metrics/dictionary'
+import { metricText, type MetricId } from '@/lib/metrics/dictionary'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/components/i18n-provider'
 
 /** Metric label with its dictionary definition in a tooltip. */
 export function MetricLabel({ id, label, className }: { id: MetricId; label?: string; className?: string }) {
-  const def = METRICS[id]
+  const def = metricText(useI18n(), id)
   return (
     <span className={cn('inline-flex items-center gap-1', className)}>
       {label ?? def.label}
@@ -17,6 +18,7 @@ export function MetricLabel({ id, label, className }: { id: MetricId; label?: st
 }
 
 export function InfoTip({ text, formula }: { text: string; formula?: string }) {
+  const { t } = useI18n()
   return (
     <Tooltip>
       <TooltipTrigger
@@ -24,7 +26,7 @@ export function InfoTip({ text, formula }: { text: string; formula?: string }) {
           <span
             role="button"
             tabIndex={0}
-            aria-label="Definice"
+            aria-label={t('ui.definition')}
             onClick={(e) => e.stopPropagation()}
             className="inline-flex cursor-help text-muted-foreground/60 hover:text-muted-foreground"
           />

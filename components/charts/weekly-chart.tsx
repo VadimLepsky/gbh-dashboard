@@ -1,17 +1,19 @@
 'use client'
 
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { formatDateShort, formatNumber } from '@/lib/format'
 import { AXIS_TICK, Legend, TooltipCard } from './chart-kit'
+import { useI18n } from '@/components/i18n-provider'
 
 /** Activities per week with the weekly target as a dashed line. */
 export function WeeklyChart({ data, target, height = 180 }: { data: { label: string; value: number }[]; target: number; height?: number }) {
+  const { t, f } = useI18n()
+  const { formatDateShort, formatNumber } = f
   return (
     <div className="flex flex-col gap-3">
       <Legend
         items={[
-          { label: 'Splněné aktivity za týden', color: 'var(--chart-1)' },
-          { label: 'Týdenní cíl', color: 'var(--foreground)', dashed: true },
+          { label: t('ui.chart.weeklyDone'), color: 'var(--chart-1)' },
+          { label: t('ui.chart.weeklyTarget'), color: 'var(--foreground)', dashed: true },
         ]}
       />
       <div style={{ height }} className="-ml-2">
@@ -25,10 +27,10 @@ export function WeeklyChart({ data, target, height = 180 }: { data: { label: str
               content={({ active, payload }) =>
                 active && payload?.length ? (
                   <TooltipCard
-                    title={`Týden od ${formatDateShort(String(payload[0].payload.label))}`}
+                    title={t('ui.chart.weekOf', { date: formatDateShort(String(payload[0].payload.label)) })}
                     rows={[
-                      { label: 'Aktivity', value: formatNumber(Number(payload[0].value)), color: 'var(--chart-1)' },
-                      { label: 'Cíl', value: formatNumber(target), color: 'var(--foreground)', dashed: true },
+                      { label: t('ui.chart.activities'), value: formatNumber(Number(payload[0].value)), color: 'var(--chart-1)' },
+                      { label: t('ui.chart.target'), value: formatNumber(target), color: 'var(--foreground)', dashed: true },
                     ]}
                   />
                 ) : null
